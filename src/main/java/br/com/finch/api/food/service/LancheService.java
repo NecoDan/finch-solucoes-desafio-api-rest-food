@@ -1,7 +1,10 @@
 package br.com.finch.api.food.service;
 
+import br.com.finch.api.food.model.Ingrediente;
+import br.com.finch.api.food.model.ItemLancheIngrediente;
 import br.com.finch.api.food.model.Lanche;
 import br.com.finch.api.food.model.reports.LanchesWrapper;
+import br.com.finch.api.food.repository.IngredienteRepository;
 import br.com.finch.api.food.repository.LancheRepository;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
 import br.com.finch.api.food.validation.LancheValidation;
@@ -10,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -17,9 +21,11 @@ import java.util.Objects;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class LancheService implements ILancheService {
 
     private final LancheRepository lancheRepository;
+    private final IngredienteRepository ingredienteRepository;
     private final LancheValidation lancheValidation;
 
     @Override
@@ -46,23 +52,29 @@ public class LancheService implements ILancheService {
 
     @Override
     public List<Lanche> recuperarPorDescricao(String descricao) throws ValidadorException {
-        return null;
+        if (Objects.isNull(descricao) || descricao.isEmpty())
+            throw new ValidadorException("Parametro com a descricao referente a busca do(s) Lanche(s), encontra-se inválida [NULA] e/ou conteudo vazio.");
+        return this.lancheRepository.findAllByDescricaoContainingIgnoreCase(descricao);
     }
 
     @Override
     public List<Lanche> recuperarTodosPorPeriodo(LocalDate dataInicio, LocalDate dataFim) throws ValidadorException {
-        return null;
+        if (Objects.isNull(dataInicio) || Objects.isNull(dataFim))
+            throw new ValidadorException("Parametro com a datas referente a busca do(s) Lanche(s), encontra-se inválida e/ou inexistente [NULA].");
+        return this.lancheRepository.recuperarTodosPorPeriodo(dataInicio, dataFim);
     }
 
     @Override
     public List<Lanche> recuperarPorDataInsercao(LocalDate data) throws ValidadorException {
-        return null;
+        if (Objects.isNull(data))
+            throw new ValidadorException("Parametro com a data referente a busca do(s) Lanche(s), encontra-se inválida e/ou inexistente [NULA].");
+        return this.lancheRepository.recuperarTodosPorDataInsercao(data);
     }
 
     @Override
     public LanchesWrapper gerar(List<Lanche> lanches) throws ValidadorException {
         if (Objects.isNull(lanches) || lanches.isEmpty())
-            throw new ValidadorException("Não existem pedido(s) ou pedido(s) inexistente(s) a serem processados pela API.");
+            throw new ValidadorException("Não existem pedido(s) ou pedido(s) encontram-se inexistente(s) a serem processados pela API.");
 
         LanchesWrapper lanchesWrapper = LanchesWrapper.builder().build();
         for (Lanche lanche : lanches)
@@ -110,5 +122,70 @@ public class LancheService implements ILancheService {
                     this.lancheRepository.deleteById(i.getId());
                     return true;
                 }).orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public LanchesWrapper adicionarIngrediente(Long lancheId, BigDecimal qtde, Ingrediente ingrediente) throws ValidadorException {
+        this.lancheValidation.validarParametrosActionReferenteIngredienteLanche(lancheId, ingrediente);
+        LanchesWrapper lanchesWrapper = LanchesWrapper.builder().build();
+
+        if (verificaExistsParametrosActionReferenteIngredientesLanche(ingrediente, lancheId))
+            return lanchesWrapper;
+
+        ItemLancheIngrediente itemLancheIngrediente = ItemLancheIngrediente.builder()
+                .lanche(Lanche.builder().id(lancheId).build())
+                .ingrediente(ingrediente)
+                .quantidade(qtde)
+                .build()
+                .gerarDataCorrente()
+                .ativado();
+
+        if (lancheRepository.existsItemIngredienteLanche(itemLancheIngrediente)) {
+            this.lancheRepository.atualizarItemIngredienteLanche(itemLancheIngrediente);
+        } else {
+            this.lancheRepository.inserirItemIngredienteLanche(itemLancheIngrediente);
+        }
+
+        lanchesWrapper.add(recalcularValorTotalLanche(recuperarPorId(lancheId)));
+        return lanchesWrapper;
+    }
+
+    @Override
+    @Transactional
+    public boolean removerIngrediente(Long lancheId, Ingrediente ingrediente) throws ValidadorException {
+        this.lancheValidation.validarParametrosActionReferenteIngredienteLanche(lancheId, ingrediente);
+
+        if (verificaExistsParametrosActionReferenteIngredientesLanche(ingrediente, lancheId))
+            return false;
+
+        ItemLancheIngrediente itemLancheIngrediente = ItemLancheIngrediente.builder()
+                .ingrediente(ingrediente)
+                .lanche(Lanche.builder().id(lancheId).build())
+                .build();
+
+        if (lancheRepository.existsItemIngredienteLanche(itemLancheIngrediente))
+            return false;
+
+        this.lancheRepository.removerItemIngredienteLanche(itemLancheIngrediente);
+        recalcularValorTotalLanche(recuperarPorId(lancheId));
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Lanche recalcularValorTotalLanche(Lanche lanche) throws ValidadorException {
+        this.lancheValidation.validarApenasObjLanche(lanche);
+
+        if (Objects.isNull(lanche.getIngredientes()) || lanche.getIngredientes().isEmpty())
+            lanche.setIngredientes(this.ingredienteRepository.recuperarIngredientesContidoAoLanche(lanche));
+
+        lanche.recalculaValorTotal(this.lancheRepository.recuperarValorTotalLancheRecalculado(lanche));
+        this.lancheRepository.saveAndFlush(lanche);
+        return lanche;
+    }
+
+    private boolean verificaExistsParametrosActionReferenteIngredientesLanche(Ingrediente ingrediente, Long lancheId) {
+        return !ingredienteRepository.existsById(ingrediente.getId()) || !this.lancheRepository.existsById(lancheId);
     }
 }

@@ -86,8 +86,8 @@ public class IngredienteController {
     public ResponseEntity<?> atualizar(@PathVariable Long ingredienteId, @Valid @RequestBody Ingrediente ingrediente) {
         try {
             if (!ingredienteService.atualizarPor(ingredienteId, ingrediente))
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar atualizar ingrediente(s): " + ex.getMessage());
         }
@@ -98,8 +98,8 @@ public class IngredienteController {
     public ResponseEntity<?> remover(@PathVariable Long ingredienteId) {
         try {
             if (!ingredienteService.excluir(Ingrediente.builder().id(ingredienteId).build()))
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover ingrediente(s): " + ex.getMessage());
         }
@@ -178,8 +178,8 @@ public class IngredienteController {
 
     private ResponseEntity<?> getResponseDefault(IngredientesWrapper ingredientesWrapper) {
         if (Objects.isNull(ingredientesWrapper) || (ingredientesWrapper.getIngredientes().isEmpty()))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(ingredientesWrapper, HttpStatus.OK);
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     private ResponseEntity<?> retornarListaIngredientes() {

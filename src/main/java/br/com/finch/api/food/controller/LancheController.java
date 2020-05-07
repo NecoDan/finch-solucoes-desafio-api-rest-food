@@ -1,5 +1,6 @@
 package br.com.finch.api.food.controller;
 
+import br.com.finch.api.food.model.Ingrediente;
 import br.com.finch.api.food.model.Lanche;
 import br.com.finch.api.food.model.reports.LanchesWrapper;
 import br.com.finch.api.food.service.ILancheService;
@@ -86,26 +87,50 @@ public class LancheController {
     public ResponseEntity<?> atualizar(@PathVariable Long lancheId, @Valid @RequestBody Lanche lanche) {
         try {
             if (!lancheService.atualizarPor(lancheId, lanche))
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar atualizar ingrediente(s): " + ex.getMessage());
         }
     }
 
-    @ApiOperation(value = "Responsável por exluir um Ingrediente, a partir de um @PathVariable contendo o id do registro...")
+    @ApiOperation(value = "Responsável por exluir um Lanche, a partir de um @PathVariable contendo o id do registro...")
     @DeleteMapping("/{lancheId}")
     public ResponseEntity<?> remover(@PathVariable Long lancheId) {
         try {
             if (!lancheService.excluir(Lanche.builder().id(lancheId).build()))
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover ingrediente(s): " + ex.getMessage());
         }
     }
 
-    @ApiOperation(value = "Retornar todos os ingredientes existentes, encontram-se ativos...")
+    @ApiOperation(value = "Responsável por adicionar um novo item ingrediente pertecente ao Lanche, a partir de um @RequestParam contendo o [ID] do registro Lanche e o [ID] do registro Ingrediente...")
+    @PostMapping(path = "/adicionaIngrediente", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> adicionarIngrediente(@RequestParam("lancheId") Long lancheId, @RequestParam("qtde") BigDecimal qtde,
+                                                  @RequestBody Ingrediente ingrediente) {
+        try {
+            return new ResponseEntity<>(lancheService.adicionarIngrediente(lancheId, qtde, ingrediente), HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar ingrediente(s): " + ex.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "Responsável por excluir um item ingrediente pertecente ao Lanche, a partir de um @RequestParam contendo o [ID] do registro Lanche e o [ID] do registro Ingrediente...")
+    @DeleteMapping(path = "/removeIngrediente")
+    public ResponseEntity<?> removerIngrediente(@RequestParam("lancheId") Long lancheId, @RequestParam("ingredienteId") Long ingredienteId) {
+        try {
+            if (!lancheService.removerIngrediente(lancheId, Ingrediente.builder().id(ingredienteId).build()))
+                return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover ingrediente(s): " + ex.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "Retornar todos os lanches existentes, encontram-se ativos...")
     @GetMapping(path = "/exibirAtivos", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllAtivos() {
         try {
@@ -115,9 +140,9 @@ public class LancheController {
         }
     }
 
-    @ApiOperation(value = "Retornar todos os ingredientes existentes, encontram-se inativos...")
+    @ApiOperation(value = "Retornar todos os lanches existentes, encontram-se inativos...")
     @GetMapping(path = "/exibirInativos", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> listAllInAtivos() {
+    public ResponseEntity<?> listAllInativos() {
         try {
             return getResponseDefault(this.lancheReportsService.listarInativos());
         } catch (Exception e) {
@@ -125,9 +150,9 @@ public class LancheController {
         }
     }
 
-    @ApiOperation(value = "Retorna todos os ingredientes existentes, a partir do filtro <b>descricao</b> que estejam igual ou semelhante a passada como parâmetro ...")
+    @ApiOperation(value = "Retorna todos os lanches existentes, a partir do filtro <b>descricao</b> que estejam igual ou semelhante a passada como parâmetro ...")
     @GetMapping(path = "/buscarPorDescricao", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> listAllInAtivos(@RequestParam("descricao") String descricao) {
+    public ResponseEntity<?> listAllPorDescricao(@RequestParam("descricao") String descricao) {
         try {
             return getResponseDefault(this.lancheReportsService.listarPorDescricaoNome(descricao));
         } catch (Exception e) {
@@ -135,7 +160,7 @@ public class LancheController {
         }
     }
 
-    @ApiOperation(value = "Retorna todos os ingredientes existentes, a partir do filtro <b>valor</b> que estejam igual ou maior ao passado como parâmetro ...")
+    @ApiOperation(value = "Retorna todos os lanches existentes, a partir do filtro <b>valor</b> que estejam igual ou maior ao passado como parâmetro ...")
     @GetMapping(path = "/buscarPorValorIgualOuMaior", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorValorMaiorOuIgual(@RequestParam("valor") BigDecimal valor) {
         try {
@@ -145,7 +170,7 @@ public class LancheController {
         }
     }
 
-    @ApiOperation(value = "Retorna todos os ingredientes existentes, a partir do filtro <b>valor</b> que estejam menor ou maior ao passado como parâmetro ...")
+    @ApiOperation(value = "Retorna todos os lanches existentes, a partir do filtro <b>valor</b> que estejam menor ou maior ao passado como parâmetro ...")
     @GetMapping(path = "/buscarPorValorIgualOuMenor", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorValorMenorOuIgual(@RequestParam("valor") BigDecimal valor) {
         try {
@@ -155,7 +180,7 @@ public class LancheController {
         }
     }
 
-    @ApiOperation(value = "Retorna todos os ingredientes existentes, a partir do filtro <b>data</b> aos quais foram gravadas no banco de dados. Com o formato da data (dd/MM/yyyy).")
+    @ApiOperation(value = "Retorna todos os lanches existentes, a partir do filtro <b>data</b> aos quais foram gravadas no banco de dados. Com o formato da data (dd/MM/yyyy).")
     @GetMapping(path = "/buscarPorDataCadastro", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorDataCadastro(@RequestParam("data") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate data) {
         try {
@@ -165,7 +190,7 @@ public class LancheController {
         }
     }
 
-    @ApiOperation(value = "Retorna todos os ingredientes existentes, a partir dos filtro(s) <b>Data Inicial</b> e <b>Data Final</b> aos quais foram gravadas no banco de dados. Com o formato da data (dd/MM/yyyy).")
+    @ApiOperation(value = "Retorna todos os lanches existentes, a partir dos filtro(s) <b>Data Inicial</b> e <b>Data Final</b> aos quais foram gravadas no banco de dados. Com o formato da data (dd/MM/yyyy).")
     @GetMapping(path = "/buscarPorPeriodo", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorPeriodo(@RequestParam("dataInicio") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dataInicio,
                                                @RequestParam("dataFim") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dataFim) {
@@ -178,8 +203,8 @@ public class LancheController {
 
     private ResponseEntity<?> getResponseDefault(LanchesWrapper lanchesWrapper) {
         if (Objects.isNull(lanchesWrapper) || (lanchesWrapper.getLanches().isEmpty()))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(lanchesWrapper, HttpStatus.OK);
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     private ResponseEntity<?> retornarListaLanches() {

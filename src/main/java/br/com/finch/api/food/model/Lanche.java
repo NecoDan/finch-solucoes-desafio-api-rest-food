@@ -15,7 +15,9 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @SuperBuilder
 @Data
@@ -23,6 +25,7 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "Lanche")
 @Entity
 @Table(name = "fd02_lanche", schema = "food_service")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Lanche extends AbstractEntity {
 
     @Tolerate
@@ -40,8 +43,29 @@ public class Lanche extends AbstractEntity {
     @JacksonXmlProperty
     private BigDecimal valorTotal;
 
-    @Fetch(FetchMode.SELECT)
-    @OneToMany(mappedBy = "lanche", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<ItemIngredienteLanche> itemIngredienteLanches = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "fd03_ingrediente_lanche", schema = "food_service", joinColumns =
+            {@JoinColumn(name = "id_lanche")}, inverseJoinColumns =
+            {@JoinColumn(name = "id_ingrediente")})
+    @JacksonXmlProperty
+    private List<Ingrediente> ingredientes = new ArrayList<>();
+
+    public void recalculaValorTotal(BigDecimal valor) {
+        if (Objects.isNull(this.ingredientes))
+            valor = BigDecimal.ZERO;
+        this.setValorTotal(valor.setScale(2, BigDecimal.ROUND_UP));
+    }
+
+    public void recalculaValorTotal() {
+        if (Objects.isNull(this.ingredientes) || this.ingredientes.isEmpty())
+            return;
+
+        this.setValorTotal(BigDecimal.valueOf(this.ingredientes.stream()
+                .filter(Objects::nonNull)
+                .filter(i -> i.getCusto().compareTo(BigDecimal.ZERO) > 0)
+                .mapToDouble(i -> i.getCusto().doubleValue())
+                .sum())
+                .setScale(2, BigDecimal.ROUND_UP));
+    }
 }
 
