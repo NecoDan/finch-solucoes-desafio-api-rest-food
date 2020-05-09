@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    List<Pedido> findAllByNomeClienteOrderById(String nomeCliente);
+    List<Pedido> findAllByNomeClienteContainingOrderById(String nomeCliente);
 
     List<Pedido> findAllByValorTotalIsNotNullAndValorTotalLessThanEqual(BigDecimal menorValor);
 

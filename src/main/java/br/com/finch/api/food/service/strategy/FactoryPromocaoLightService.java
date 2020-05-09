@@ -29,22 +29,22 @@ public class FactoryPromocaoLightService implements IFactoryPromocaoService {
     }
 
     private boolean isContemAlface(ItemPedido itemPedido) {
-        return (isContemIngredienteAlfaceWithIngredientes(itemPedido.getLanche().getIngredientes()) || isContemIngredienteAlfaceWithAdicionais(itemPedido.getAdicionais()));
+        return (isContemAlfaceWithIngredientes(itemPedido.getLanche().getIngredientes()) || isContemIngredienteAlfaceWithAdicionais(itemPedido.getAdicionais()));
     }
 
     private boolean isNotContemBacon(ItemPedido itemPedido) {
-        return (isNotContemIngredienteBaconWithIngredientes(itemPedido.getLanche().getIngredientes()) || isNotContemIngredienteBaconWithAdicionais(itemPedido.getAdicionais()));
+        return (!isContemBaconWithIngredientes(itemPedido.getLanche().getIngredientes()) && !isContemBaconWithAdicionais(itemPedido.getAdicionais()));
     }
 
-    private boolean isNotContemIngredienteBaconWithIngredientes(List<Ingrediente> ingredientes) {
-        return Objects.isNull(ingredientes.stream()
+    private boolean isContemBaconWithIngredientes(List<Ingrediente> ingredientes) {
+        return Objects.nonNull(ingredientes.stream()
                 .filter(Objects::nonNull)
                 .filter(Ingrediente::isBacon)
                 .findAny()
                 .orElse(null));
     }
 
-    private boolean isContemIngredienteAlfaceWithIngredientes(List<Ingrediente> ingredientes) {
+    private boolean isContemAlfaceWithIngredientes(List<Ingrediente> ingredientes) {
         return Objects.nonNull(ingredientes.stream()
                 .map(Ingrediente::getDescricao)
                 .collect(Collectors.toList())
@@ -58,13 +58,13 @@ public class FactoryPromocaoLightService implements IFactoryPromocaoService {
     private boolean isContemIngredienteAlfaceWithAdicionais(List<AdicionalItemPedido> adicionalItemPedidoList) {
         if (isItensAdicionaisInvalidos(adicionalItemPedidoList))
             return false;
-        return isContemIngredienteAlfaceWithIngredientes(adicionalItemPedidoList.stream().map(AdicionalItemPedido::getIngrediente).collect(Collectors.toList()));
+        return isContemAlfaceWithIngredientes(adicionalItemPedidoList.stream().map(AdicionalItemPedido::getIngrediente).collect(Collectors.toList()));
     }
 
-    private boolean isNotContemIngredienteBaconWithAdicionais(List<AdicionalItemPedido> adicionalItemPedidoList) {
+    private boolean isContemBaconWithAdicionais(List<AdicionalItemPedido> adicionalItemPedidoList) {
         if (isItensAdicionaisInvalidos(adicionalItemPedidoList))
             return false;
-        return isNotContemIngredienteBaconWithIngredientes(adicionalItemPedidoList.stream().map(AdicionalItemPedido::getIngrediente).collect(Collectors.toList()));
+        return isContemBaconWithIngredientes(adicionalItemPedidoList.stream().map(AdicionalItemPedido::getIngrediente).collect(Collectors.toList()));
     }
 
     private boolean isItensAdicionaisInvalidos(List<AdicionalItemPedido> adicionalItemPedidoList) {

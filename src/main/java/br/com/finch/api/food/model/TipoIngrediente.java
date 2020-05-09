@@ -1,6 +1,7 @@
 package br.com.finch.api.food.model;
 
 import br.com.finch.api.food.util.domain.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
@@ -20,9 +21,9 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class TipoIngrediente extends AbstractEntity {
 
-    private final static Long TIPO_CARNE = 1L;
-    private final static Long TIPO_QUEIJO = 2L;
-    private final static Long TIPO_BACON = 4L;
+    public final static Long TIPO_CARNE = 1L;
+    public final static Long TIPO_QUEIJO = 2L;
+    public final static Long TIPO_BACON = 4L;
 
     @Tolerate
     public TipoIngrediente() {
@@ -33,19 +34,28 @@ public class TipoIngrediente extends AbstractEntity {
     @Column(name = "descricao")
     private String descricao;
 
+    @JsonIgnore
     public boolean isIdValido() {
         return Objects.nonNull(this.getId());
     }
 
+    @JsonIgnore
     public boolean isCarne() {
         return (isIdValido() && this.getId().equals(TIPO_CARNE));
     }
 
+    @JsonIgnore
     public boolean isQueijo() {
         return (isIdValido() && this.getId().equals(TIPO_QUEIJO));
     }
 
+    @JsonIgnore
     public boolean isBacon() {
         return (isIdValido() && this.getId().equals(TIPO_BACON));
+    }
+
+    @JsonIgnore
+    public boolean isEquals(TipoIngrediente otherTipoIngrediente) {
+        return (Objects.nonNull(otherTipoIngrediente) && this.getId().equals(otherTipoIngrediente.getId()));
     }
 }

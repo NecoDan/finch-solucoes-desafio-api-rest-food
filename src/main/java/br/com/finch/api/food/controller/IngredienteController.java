@@ -179,7 +179,7 @@ public class IngredienteController {
     private ResponseEntity<?> getResponseDefault(IngredientesWrapper ingredientesWrapper) {
         if (Objects.isNull(ingredientesWrapper) || (ingredientesWrapper.getIngredientes().isEmpty()))
             return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ingredientesWrapper);
     }
 
     private ResponseEntity<?> retornarListaIngredientes() {

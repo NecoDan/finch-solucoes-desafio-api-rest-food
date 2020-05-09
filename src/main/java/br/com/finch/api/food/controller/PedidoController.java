@@ -118,11 +118,21 @@ public class PedidoController {
         }
     }
 
-    @ApiOperation(value = "Retorna todos os lanches existentes, a partir do filtro <b>data</b> aos quais foram gravadas no banco de dados. Com o formato da data (dd/MM/yyyy).")
+    @ApiOperation(value = "Retorna todos os pedidos de existentes, a partir do filtro <b>data</b> aos quais foram gravadas no banco de dados. Com o formato da data (dd/MM/yyyy).")
     @GetMapping(path = "/buscarPorDataCadastro", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorDataCadastro(@RequestParam("data") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate data) {
         try {
             return getResponseDefault(lanchePedidoReportService.listarPorDataInsercao(data));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
+        }
+    }
+
+    @ApiOperation(value = "Retorna todos os pedidos de lanches existentes, a partir do filtro contedo o nome do cliente.")
+    @GetMapping(path = "/buscarPorNomeCliente", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> listAllPorNomeCliente(@RequestParam("nomeCliente") String nomeCliente) {
+        try {
+            return getResponseDefault(lanchePedidoReportService.listarPorNomeCliente(nomeCliente));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }

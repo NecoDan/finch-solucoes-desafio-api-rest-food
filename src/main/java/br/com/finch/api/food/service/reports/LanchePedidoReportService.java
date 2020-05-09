@@ -50,6 +50,13 @@ public class LanchePedidoReportService implements ILanchePedidoReportService {
     }
 
     @Override
+    public PedidosWrapper listarPorNomeCliente(String nomeCliente) throws ValidadorException {
+        if (Objects.isNull(nomeCliente) || nomeCliente.isEmpty())
+            throw new ValidadorException("Parametro com o nome do cliente para efetuar a busca, encontra-se vazio (em branco) ou inválido e/ou inexistente[NULO].");
+        return PedidosWrapper.builder().pedidos(pedidoRepository.findAllByNomeClienteContainingOrderById(nomeCliente)).build();
+    }
+
+    @Override
     public PedidosWrapper listarPorPeriodo(LocalDate dataInicio, LocalDate dataFim) throws ValidadorException {
         return PedidosWrapper.builder().pedidos(pedidoRepository.recuperarTodosPorPeriodo(dataInicio, dataFim)).build();
     }

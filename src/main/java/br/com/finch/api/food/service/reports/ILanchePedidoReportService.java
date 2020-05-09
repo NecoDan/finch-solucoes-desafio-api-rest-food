@@ -18,5 +18,7 @@ public interface ILanchePedidoReportService {
 
     PedidosWrapper listarPorDataInsercao(LocalDate data) throws ValidadorException;
 
+    PedidosWrapper listarPorNomeCliente(String nomeCliente) throws ValidadorException;
+
     PedidosWrapper listarPorPeriodo(LocalDate dataInicio, LocalDate dataFim) throws ValidadorException;
 }

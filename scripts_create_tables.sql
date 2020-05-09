@@ -127,6 +127,7 @@ create table if not exists food_service.fd06_adicional_item_lanche_pedido
     id_item_lanche_pedido bigint null,
     id_ingrediente        bigint null,
     qtde                  decimal(19, 6)  default 1.0 null,
+    valor_custo           decimal(19, 6)  default 1.0 null,
     dt_cadastro           timestamp       default now(),
     ativo                 bool   null     default true,
     primary key (id)

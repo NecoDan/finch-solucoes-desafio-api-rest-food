@@ -4,7 +4,9 @@ import br.com.finch.api.food.util.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.Tolerate;
@@ -49,8 +51,21 @@ public class AdicionalItemPedido extends AbstractEntity {
     @Column(name = "qtde")
     private BigDecimal quantidade;
 
+    @Setter(AccessLevel.NONE)
+    @DecimalMin(value = "0.0", inclusive = true)
+    @Digits(integer = 19, fraction = 2)
+    @JacksonXmlProperty
+    @Column(name = "valor_custo")
+    private BigDecimal valorCusto;
+
     @JsonIgnore
     public BigDecimal getCustoAdicional() {
+        if (Objects.isNull(this.valorCusto) || this.valorCusto.compareTo(BigDecimal.ZERO) == 0)
+            this.valorCusto = getValorCustoIngrediente();
+        return this.valorCusto;
+    }
+
+    private BigDecimal getValorCustoIngrediente() {
         if (Objects.nonNull(this.getIngrediente()) && Objects.nonNull(this.getIngrediente().getCusto()) && this.getIngrediente().getCusto().compareTo(BigDecimal.ZERO) != 0)
             return this.getIngrediente().getCusto();
         return BigDecimal.ZERO;
@@ -68,7 +83,9 @@ public class AdicionalItemPedido extends AbstractEntity {
 
     @JsonIgnore
     public double getQuantidadeNumeric() {
-        return this.quantidade.doubleValue();
+        if (Objects.nonNull(this.quantidade))
+            return this.quantidade.doubleValue();
+        return BigDecimal.ZERO.doubleValue();
     }
 
     @JsonIgnore
@@ -84,15 +101,5 @@ public class AdicionalItemPedido extends AbstractEntity {
     @JsonIgnore
     public boolean isParamValidosFilterCalculoQtdeAdicionada() {
         return Objects.nonNull(this.ingrediente) && this.ingrediente.isTipoValido();
-    }
-
-    @JsonIgnore
-    public boolean isContemIngredienteHamburguer() {
-        return isParamValidosFilterCalculoQtdeAdicionada() && this.ingrediente.isCarne();
-    }
-
-    @JsonIgnore
-    public boolean isContemIngredienteQueijo() {
-        return isParamValidosFilterCalculoQtdeAdicionada() && this.ingrediente.isQueijo();
     }
 }

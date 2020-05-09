@@ -1,12 +1,12 @@
 package br.com.finch.api.food.model;
 
+import br.com.finch.api.food.model.domain.CalculadoraDescontoQtdePorcoes;
 import br.com.finch.api.food.service.negocio.Promocao;
 import br.com.finch.api.food.util.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.Fetch;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Objects;
 
 @SuperBuilder
-@ToString
 @Data
+@ToString
 @JacksonXmlRootElement(localName = "ItemPedido")
 @Entity
 @Table(name = "fd05_item_lanche_pedido", schema = "food_service")
@@ -55,12 +55,14 @@ public class ItemPedido extends AbstractEntity {
     @Column(name = "qtde")
     private BigDecimal quantidade;
 
+    @Setter(AccessLevel.NONE)
     @DecimalMin(value = "0.0", inclusive = true)
     @Digits(integer = 19, fraction = 2)
     @JacksonXmlProperty
     @Column(name = "valor_item")
     private BigDecimal valorItem;
 
+    @Setter(AccessLevel.NONE)
     @DecimalMin(value = "0.0", inclusive = true)
     @Digits(integer = 19, fraction = 2)
     @JacksonXmlProperty
@@ -77,6 +79,12 @@ public class ItemPedido extends AbstractEntity {
     @Fetch(FetchMode.SELECT)
     @OneToMany(mappedBy = "itemPedido", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AdicionalItemPedido> adicionais = new ArrayList<>();
+
+    @Transient
+    @Getter
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    private CalculadoraDescontoQtdePorcoes calculadoraDescontoQtdePorcoes = new CalculadoraDescontoQtdePorcoes();
 
     public void add(AdicionalItemPedido adicionalItemPedido) {
         if (isNotContainsAdicionais())
@@ -188,7 +196,8 @@ public class ItemPedido extends AbstractEntity {
         return !(Objects.isNull(this.getValorTotal()) || !isNotContainsAdicionais());
     }
 
-    private boolean isParamsValidosFilterCalculoQtdePorcoes() {
+    @JsonIgnore
+    public boolean isParamsValidosFilterCalculoQtdePorcoes() {
         return (Objects.nonNull(this.valorTotal) && Objects.nonNull(this.adicionais) && !this.adicionais.isEmpty());
     }
 

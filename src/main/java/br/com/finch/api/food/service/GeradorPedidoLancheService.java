@@ -65,15 +65,6 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED)
-    public Pedido atualizarPedido(Pedido pedido) throws ValidadorException {
-        Pedido pedidoAtualizar = recalcularValorTotalPedido(pedido);
-        if (Objects.nonNull(pedidoAtualizar))
-            this.pedidoRepository.save(pedidoAtualizar);
-        return pedidoAtualizar;
-    }
-
-    @Override
-    @Transactional(value = Transactional.TxType.REQUIRED)
     public ItemPedido gerarItemPedido(Integer item, ItemPedido itemPedido) throws ValidadorException {
         Lanche lanche = recuperarLanche(itemPedido.getLanche());
         this.lancheValidation.validaLanche(lanche);
@@ -97,6 +88,15 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
         itemPedido = this.pedidoService.salvarItem(itemPedido);
 
         return itemPedido;
+    }
+
+    @Override
+    @Transactional(value = Transactional.TxType.REQUIRED)
+    public Pedido atualizarPedido(Pedido pedido) throws ValidadorException {
+        Pedido pedidoAtualizar = recalcularValorTotalPedido(pedido);
+        if (Objects.nonNull(pedidoAtualizar))
+            this.pedidoRepository.save(pedidoAtualizar);
+        return pedidoAtualizar;
     }
 
     @Override
@@ -125,6 +125,7 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
                 .ingrediente(ingrediente)
                 .itemPedido(itemPedido)
                 .quantidade(qtde)
+                .valorCusto(ingrediente.getCusto())
                 .dataCadastro(LocalDateTime.now())
                 .ativo(Boolean.TRUE)
                 .build();

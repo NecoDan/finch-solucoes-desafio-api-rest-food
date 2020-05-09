@@ -43,7 +43,6 @@ public class Ingrediente extends AbstractEntity {
 
     @OneToOne
     @JoinColumn(name = "id_tipo")
-    @JsonIgnore
     private TipoIngrediente tipoIngrediente;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -71,5 +70,10 @@ public class Ingrediente extends AbstractEntity {
     @JsonIgnore
     public boolean isBacon() {
         return (isTipoValido() && this.tipoIngrediente.isBacon());
+    }
+
+    @JsonIgnore
+    public boolean isTipoEquals(TipoIngrediente otherTipoIngrediente) {
+        return (isTipoValido() && this.tipoIngrediente.isEquals(otherTipoIngrediente));
     }
 }
