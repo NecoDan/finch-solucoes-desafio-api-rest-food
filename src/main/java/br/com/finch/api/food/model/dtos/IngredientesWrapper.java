@@ -1,4 +1,4 @@
-package br.com.finch.api.food.model.reports;
+package br.com.finch.api.food.model.dtos;
 
 import br.com.finch.api.food.model.Ingrediente;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;

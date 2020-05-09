@@ -1,6 +1,6 @@
 package br.com.finch.api.food.service.reports;
 
-import br.com.finch.api.food.model.reports.IngredientesWrapper;
+import br.com.finch.api.food.model.dtos.IngredientesWrapper;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
 
 import java.math.BigDecimal;

@@ -2,7 +2,7 @@ package br.com.finch.api.food.controller;
 
 import br.com.finch.api.food.model.Ingrediente;
 import br.com.finch.api.food.model.Lanche;
-import br.com.finch.api.food.model.reports.LanchesWrapper;
+import br.com.finch.api.food.model.dtos.LanchesWrapper;
 import br.com.finch.api.food.service.ILancheService;
 import br.com.finch.api.food.service.reports.ILancheReportsService;
 import io.swagger.annotations.Api;
@@ -67,7 +67,7 @@ public class LancheController {
         try {
             return new ResponseEntity<>(lancheService.gerar(Collections.singletonList(lanche)), HttpStatus.CREATED);
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar ingrediente(s): " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar lanches(s): " + ex.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class LancheController {
         try {
             return new ResponseEntity<>(lancheService.gerar(lancheList), HttpStatus.CREATED);
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar ingrediente(s): " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar lanches(s): " + ex.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class LancheController {
                 return ResponseEntity.notFound().build();
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar atualizar ingrediente(s): " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar atualizar lanches(s): " + ex.getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ public class LancheController {
                 return ResponseEntity.notFound().build();
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover ingrediente(s): " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover lanche(s): " + ex.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class LancheController {
         try {
             return new ResponseEntity<>(lancheService.adicionarIngrediente(lancheId, qtde, ingrediente), HttpStatus.CREATED);
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar ingrediente(s): " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar lanche(s): " + ex.getMessage());
         }
     }
 
@@ -126,7 +126,7 @@ public class LancheController {
                 return ResponseEntity.notFound().build();
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover ingrediente(s): " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover lanche(s): " + ex.getMessage());
         }
     }
 
@@ -204,7 +204,7 @@ public class LancheController {
     private ResponseEntity<?> getResponseDefault(LanchesWrapper lanchesWrapper) {
         if (Objects.isNull(lanchesWrapper) || (lanchesWrapper.getLanches().isEmpty()))
             return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(lanchesWrapper);
     }
 
     private ResponseEntity<?> retornarListaLanches() {

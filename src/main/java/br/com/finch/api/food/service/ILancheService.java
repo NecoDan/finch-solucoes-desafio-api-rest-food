@@ -2,7 +2,7 @@ package br.com.finch.api.food.service;
 
 import br.com.finch.api.food.model.Ingrediente;
 import br.com.finch.api.food.model.Lanche;
-import br.com.finch.api.food.model.reports.LanchesWrapper;
+import br.com.finch.api.food.model.dtos.LanchesWrapper;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
 
 import java.math.BigDecimal;

@@ -3,11 +3,11 @@ package br.com.finch.api.food.service;
 import br.com.finch.api.food.model.Ingrediente;
 import br.com.finch.api.food.model.ItemLancheIngrediente;
 import br.com.finch.api.food.model.Lanche;
-import br.com.finch.api.food.model.reports.LanchesWrapper;
+import br.com.finch.api.food.model.dtos.LanchesWrapper;
 import br.com.finch.api.food.repository.IngredienteRepository;
 import br.com.finch.api.food.repository.LancheRepository;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
-import br.com.finch.api.food.validation.LancheValidation;
+import br.com.finch.api.food.validation.ILancheValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class LancheService implements ILancheService {
 
     private final LancheRepository lancheRepository;
     private final IngredienteRepository ingredienteRepository;
-    private final LancheValidation lancheValidation;
+    private final ILancheValidation lancheValidation;
 
     @Override
     public Lanche recuperarPorId(Long id) throws ValidadorException {
@@ -175,10 +175,10 @@ public class LancheService implements ILancheService {
     @Override
     @Transactional
     public Lanche recalcularValorTotalLanche(Lanche lanche) throws ValidadorException {
-        this.lancheValidation.validarApenasObjLanche(lanche);
+        this.lancheValidation.validarSomenteLanche(lanche);
 
         if (Objects.isNull(lanche.getIngredientes()) || lanche.getIngredientes().isEmpty())
-            lanche.setIngredientes(this.ingredienteRepository.recuperarIngredientesContidoAoLanche(lanche));
+            lanche.addAllIngrediente(this.ingredienteRepository.recuperarIngredientesContidoAoLanche(lanche));
 
         lanche.recalculaValorTotal(this.lancheRepository.recuperarValorTotalLancheRecalculado(lanche));
         this.lancheRepository.saveAndFlush(lanche);

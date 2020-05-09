@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class DateTimeConfig {
-
     @Bean
     public FormattingConversionService conversionService() {
         DefaultFormattingConversionService conversionService =

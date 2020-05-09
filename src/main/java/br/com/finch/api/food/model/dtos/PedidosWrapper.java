@@ -1,7 +1,6 @@
-package br.com.finch.api.food.model.reports;
+package br.com.finch.api.food.model.dtos;
 
-import br.com.finch.api.food.model.Lanche;
-import br.com.finch.api.food.model.LanchePedido;
+import br.com.finch.api.food.model.Pedido;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -16,24 +15,24 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @ToString
-@JacksonXmlRootElement(localName = "Lanches")
+@JacksonXmlRootElement(localName = "Pedidos")
 @AllArgsConstructor
-public class LanchesWrapper implements Serializable {
+public class PedidosWrapper implements Serializable {
 
     private static final long serialVersionUID = 22L;
 
-    @JacksonXmlProperty(localName = "Lanche")
+    @JacksonXmlProperty(localName = "Pedido")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<Lanche> lanches;
+    private List<Pedido> pedidos;
 
-    public void add(Lanche lanche) {
-        if (Objects.isNull(this.lanches))
-            this.lanches = new ArrayList<>();
-        this.lanches.add(lanche);
+    public void add(Pedido pedido) {
+        if (Objects.isNull(this.pedidos))
+            this.pedidos = new ArrayList<>();
+        this.pedidos.add(pedido);
     }
 
-    public LanchesWrapper adicionar(Lanche lanche) {
-        this.add(lanche);
+    public PedidosWrapper adicionar(Pedido pedido) {
+        this.add(pedido);
         return this;
     }
 }

@@ -1,7 +1,7 @@
 package br.com.finch.api.food.service;
 
 import br.com.finch.api.food.model.Ingrediente;
-import br.com.finch.api.food.model.reports.IngredientesWrapper;
+import br.com.finch.api.food.model.dtos.IngredientesWrapper;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
 
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IIngredienteService {
 
-    Ingrediente recuperarPorId(Long id) throws ValidadorException;
+    Ingrediente recuperarPorId(Long id);
 
     List<Ingrediente> recuperarTodos();
 

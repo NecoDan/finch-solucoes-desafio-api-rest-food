@@ -1,10 +1,10 @@
 package br.com.finch.api.food.service;
 
 import br.com.finch.api.food.model.Ingrediente;
-import br.com.finch.api.food.model.reports.IngredientesWrapper;
+import br.com.finch.api.food.model.dtos.IngredientesWrapper;
 import br.com.finch.api.food.repository.IngredienteRepository;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
-import br.com.finch.api.food.validation.IngredienteValidation;
+import br.com.finch.api.food.validation.IIngredienteValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,10 @@ import java.util.Objects;
 public class IngredienteService implements IIngredienteService {
 
     private final IngredienteRepository ingredienteRepository;
-    private final IngredienteValidation ingredienteValidation;
+    private final IIngredienteValidation ingredienteValidation;
 
     @Override
-    public Ingrediente recuperarPorId(Long id) throws ValidadorException {
-        if (Objects.isNull(id))
-            throw new ValidadorException("Parametro com a referência [ID] ao Ingrediente encontra-se inválida e/ou inexistente [NULA].");
+    public Ingrediente recuperarPorId(Long id)  {
         return this.ingredienteRepository.findById(id).orElse(null);
     }
 

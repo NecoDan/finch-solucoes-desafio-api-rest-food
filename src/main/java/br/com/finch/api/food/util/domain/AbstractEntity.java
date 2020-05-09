@@ -36,14 +36,23 @@ public class AbstractEntity implements Serializable {
 
     @JacksonXmlProperty
     @Setter(value = AccessLevel.PUBLIC)
-    @Column(name = "ativo", columnDefinition="tinyint(1) default 1", nullable = false)
+    @Column(name = "ativo", columnDefinition = "tinyint(1) default 1", nullable = false)
     private boolean ativo = true;
 
     @Tolerate
-    public AbstractEntity() {}
+    public AbstractEntity() {
+    }
 
     public void gerarDataCorrente() {
         if (Objects.isNull(this.getDataCadastro()))
             this.setDataCadastro(LocalDateTime.now());
+    }
+
+    public void ativado() {
+        this.ativo = true;
+    }
+
+    public void desativado() {
+        this.ativo = false;
     }
 }

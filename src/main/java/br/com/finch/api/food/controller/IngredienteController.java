@@ -1,7 +1,7 @@
 package br.com.finch.api.food.controller;
 
 import br.com.finch.api.food.model.Ingrediente;
-import br.com.finch.api.food.model.reports.IngredientesWrapper;
+import br.com.finch.api.food.model.dtos.IngredientesWrapper;
 import br.com.finch.api.food.service.IIngredienteService;
 import br.com.finch.api.food.service.reports.IIngredienteReportService;
 import io.swagger.annotations.Api;

@@ -10,13 +10,13 @@ public enum Promocao {
 
     MUITO_QUEIJO(new PromocaoMuitoQueijo());
 
-    private IRegraCalculoPromocao regraCalculoDesconto;
+    private final IRegraCalculoPromocao regraCalculoPromocaoDesconto;
 
-    Promocao(IRegraCalculoPromocao regraCalculoDesconto) {
-        this.regraCalculoDesconto = regraCalculoDesconto;
+    Promocao(IRegraCalculoPromocao regraCalculoPromocaoDesconto) {
+        this.regraCalculoPromocaoDesconto = regraCalculoPromocaoDesconto;
     }
 
-    public IRegraCalculoPromocao getRegraCalculoDesconto() {
-        return this.regraCalculoDesconto;
+    public IRegraCalculoPromocao getRegraCalculoPromocaoDesconto() {
+        return this.regraCalculoPromocaoDesconto;
     }
 }
