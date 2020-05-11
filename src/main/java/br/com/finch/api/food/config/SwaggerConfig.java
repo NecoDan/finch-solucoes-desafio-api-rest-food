@@ -26,7 +26,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     }
 
     private ApiInfo metaDataAppInfo() {
-        return new ApiInfoBuilder().title("Finch Solucçoes [MVP API FOOD] - Spring Boot REST API for Swagger.")
+        return new ApiInfoBuilder().title("Finch Soluções [MVP API FOOD] - Spring Boot REST API for Swagger.")
                 .description("\"Documentação da API de acesso aos endpoints com Swagger - [MVP API FOOD]\"")
                 .version("1.0")
                 .license("Apache License Version 2.0")

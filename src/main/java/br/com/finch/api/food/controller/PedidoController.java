@@ -88,7 +88,7 @@ public class PedidoController {
             return new ResponseEntity<>(geradorPedidoLancheService.adicionarItemLanchePedido(FilterPedido.builder()
                     .idLanche(lancheId)
                     .idPedido(pedidoId)
-                    .qtde(qtde)
+                    .qtde(qtde)&
                     .build()), HttpStatus.CREATED);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar pedido(s): " + ex.getMessage());
@@ -101,9 +101,10 @@ public class PedidoController {
                                                           @RequestParam("ingredienteId") Long ingredienteId,
                                                           @RequestParam("qtde") BigDecimal qtde) {
         try {
-            return new ResponseEntity<>(geradorPedidoLancheService.adicionarItemLanchePedido(FilterPedido.builder()
+            return new ResponseEntity<>(geradorPedidoLancheService.adicionarIngredienteAdicionaAItemPedido(FilterPedido.builder()
                     .idLanche(lancheId)
                     .idPedido(pedidoId)
+                    .idIngrediente(ingredienteId)
                     .qtde(qtde)
                     .build()), HttpStatus.CREATED);
         } catch (Exception ex) {

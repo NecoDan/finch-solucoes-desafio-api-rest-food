@@ -6,6 +6,7 @@ import br.com.finch.api.food.model.dtos.PedidosWrapper;
 import br.com.finch.api.food.service.negocio.Promocao;
 import br.com.finch.api.food.service.strategy.IBuilderPromocaoService;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
+import br.com.finch.api.food.validation.IIngredienteValidation;
 import br.com.finch.api.food.validation.ILancheValidation;
 import br.com.finch.api.food.validation.IPedidoValidation;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
     private final IBuilderPromocaoService builderPromocaoService;
     private final ILancheValidation lancheValidation;
     private final IPedidoValidation pedidoValidation;
+    private final IIngredienteValidation ingredienteValidation;
 
     @Override
     public PedidosWrapper gerar(List<Pedido> pedidos) throws ValidadorException {
@@ -132,40 +134,57 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
     public PedidosWrapper adicionarItemLanchePedido(FilterPedido filterPedido) throws ValidadorException {
         PedidosWrapper pedidosWrapper = PedidosWrapper.builder().build();
 
-        FilterPedido filterPedidoNovo = extrairFilterPedidoContendoDependenciaValidas(filterPedido);
-        Pedido pedido = filterPedidoNovo.getPedido();
-        Lanche lanche = filterPedidoNovo.getLanche();
-
-        ItemPedido itemPedido = this.pedidoService.recuperarItemPedidoPor(pedido, lanche);
-
-        itemPedido = Objects.isNull(itemPedido) ? createNovoItemPedido(pedido, lanche, filterPedido.getQtde())
-                : updateItemPedidoAPartir(itemPedido, filterPedido.getQtde());
+        FilterPedido filterPedidoNovo = extrairFilterPedidoContendoDependenciaValidas(filterPedido, false);
+        ItemPedido itemPedido = extrairItemPedido(filterPedidoNovo);
+        Pedido pedido = itemPedido.getPedido();
 
         processarItem(itemPedido);
         pedidosWrapper.add(pedidoService.atualizarPedido(pedido));
         return pedidosWrapper;
     }
 
-    private FilterPedido extrairFilterPedidoContendoDependenciaValidas(FilterPedido filterPedido) throws ValidadorException {
+    private ItemPedido extrairItemPedido(FilterPedido filterPedido) throws ValidadorException {
+        Pedido pedido = filterPedido.getPedido();
+        Lanche lanche = filterPedido.getLanche();
+
+        ItemPedido itemPedido = this.pedidoService.recuperarItemPedidoPor(pedido, lanche);
+        itemPedido = Objects.isNull(itemPedido) ? createNovoItemPedido(pedido, lanche, filterPedido.getQtde()) : updateItemPedidoAPartir(itemPedido, filterPedido.getQtde());
+
+        return itemPedido;
+    }
+
+    private FilterPedido extrairFilterPedidoContendoDependenciaValidas(FilterPedido filterPedido, boolean retornaIngrediente) throws ValidadorException {
         pedidoValidation.validarParamsFilterPedidoAddItemPedido(filterPedido);
 
-        Pedido pedido = this.pedidoService.recuperarPorId(filterPedido.getIdPedido());
+        Pedido pedido = pedidoService.recuperarPorId(filterPedido.getIdPedido());
         pedidoValidation.validarSomentePedido(pedido);
 
         Lanche lanche = recuperarLanche(Lanche.builder().id(filterPedido.getIdLanche()).build());
         lancheValidation.validarSomenteLanche(lanche);
 
-        return FilterPedido.builder()
+        FilterPedido filterPedidoNovo = FilterPedido.builder()
                 .qtde(filterPedido.getQtde())
                 .pedido(pedido)
                 .lanche(lanche)
                 .build();
 
+        if (retornaIngrediente && Objects.nonNull(filterPedido.getIdIngrediente()))
+            filterPedido.setIngrediente(ingredienteService.recuperarPorId(filterPedido.getIdIngrediente()));
+
+        return filterPedidoNovo;
     }
 
     @Override
     public PedidosWrapper adicionarIngredienteAdicionaAItemPedido(FilterPedido filterPedido) throws ValidadorException {
-        return null;
+        FilterPedido filterPedidoNovo = extrairFilterPedidoContendoDependenciaValidas(filterPedido, false);
+
+        ItemPedido itemPedido = extrairItemPedido(filterPedidoNovo);
+        itemPedido.add(mountAdicionalItem(filterPedido.getIdIngrediente(), filterPedido.getQtde(), itemPedido));
+
+        Pedido pedido = itemPedido.getPedido();
+
+        processarItem(itemPedido);
+        return PedidosWrapper.builder().build().adicionar(pedidoService.atualizarPedido(pedido));
     }
 
     private ItemPedido updateItemPedidoAPartir(ItemPedido itemPedido, BigDecimal qtde) {
