@@ -28,7 +28,7 @@
   ##### Endpoints: 
   
   Utilizando a ferramenta de documentação de endpoints ```Swagger```, pode-sevisualizar todos os endpoints disponíveis.<br>
-  Basta acessar a documentação da API por meio da URL <link>`http://localhost:8080/swagger-ui.html` , logo após a sua inicialização. <br><br> 
+  Basta acessar a documentação da API por meio da URL <link>http://localhost:8080/swagger-ui.html , logo após a sua inicialização. <br><br> 
   De sorte, segue a lista de alguns endpoints para conhecimento: 
   
   - Retornar uma lista completa de pedidos (JSON/XML):
@@ -49,4 +49,4 @@
      - `http://localhost:8080/pedidos/buscarPorPeriodo?dataInicio=01/01/2020&dataFim=01/06/2020`
      - `http://localhost:8080/pedidos/buscarPorValorIgualOuMaior?valor=10.00`
      
- Entre outros, aos quais podem ser identificados no endereço fornecido pelo Swagger: <link>`http://localhost:8080/swagger-ui.html`.
+ Entre outros, aos quais podem ser identificados no endereço fornecido pelo Swagger: <link>http://localhost:8080/swagger-ui.html.
