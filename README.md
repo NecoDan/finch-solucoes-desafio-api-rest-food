@@ -1,4 +1,4 @@
-# Catalogo Lanches Food - Web Service FINCH SOLUÇÕES
+# API Web Service - Lanches Food - Finch Soluções
   Projeto em Spring Boot de uma construção API RESTFul voltado à atender o desafio Finch Soluções <link>http://www.finchsolucoes.com.br/.
    
   Uma solução criada em Java em formato de API REST que atenda aos requisitos para a recepção e/ou criação de pedidos contendo lanches deliciosos aos seus respectivos clientes, onde todos os serviços devem trabalhar com XML e JSON em suas chamadas e retornos.
