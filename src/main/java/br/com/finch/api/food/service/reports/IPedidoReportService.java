@@ -6,7 +6,7 @@ import br.com.finch.api.food.util.exceptions.ValidadorException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public interface ILanchePedidoReportService {
+public interface IPedidoReportService {
 
     PedidosWrapper listarPorId(Long id) throws ValidadorException;
 

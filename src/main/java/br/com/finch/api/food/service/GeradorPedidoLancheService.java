@@ -3,8 +3,6 @@ package br.com.finch.api.food.service;
 import br.com.finch.api.food.model.*;
 import br.com.finch.api.food.model.dtos.FilterPedido;
 import br.com.finch.api.food.model.dtos.PedidosWrapper;
-import br.com.finch.api.food.repository.ItemPedidoRepository;
-import br.com.finch.api.food.repository.PedidoRepository;
 import br.com.finch.api.food.service.negocio.Promocao;
 import br.com.finch.api.food.service.strategy.IBuilderPromocaoService;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
 
-    private final PedidoRepository pedidoRepository;
-    private final ItemPedidoRepository itemPedidoRepository;
     private final IPedidoService pedidoService;
     private final ILancheService lancheService;
     private final IIngredienteService ingredienteService;
@@ -48,19 +44,29 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
 
     @Override
     @Transactional(value = Transactional.TxType.REQUIRED)
-    public Pedido gerar(Pedido pedidoNovo) throws ValidadorException {
+    public Pedido gerar(Pedido pedido) throws ValidadorException {
+        Pedido pedidoNovo = null;
+
+        if (Objects.nonNull(pedido) && Objects.nonNull(pedido.getId()))
+            pedidoNovo = this.pedidoService.recuperarPorId(pedido.getId());
+
+        if (Objects.nonNull(pedidoNovo))
+            return pedidoNovo;
+
+        pedidoNovo = pedido;
         pedidoValidation.validarParamsEDependenciasPedido(pedidoNovo);
+        assert pedidoNovo != null;
         pedidoNovo.gerarDataCorrente();
         pedidoNovo.ativado();
         pedidoNovo = this.pedidoService.salvar(pedidoNovo);
 
-        int item = 0;
+        int item = 1;
         for (ItemPedido itemPedido : pedidoNovo.getItens()) {
-            item++;
             itemPedido.setPedido(pedidoNovo);
             gerarItemPedido(item, itemPedido);
+            item++;
         }
-        return atualizarPedido(pedidoNovo);
+        return this.pedidoService.atualizarPedido(pedidoNovo);
     }
 
     @Override
@@ -88,15 +94,6 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
         itemPedido = this.pedidoService.salvarItem(itemPedido);
 
         return itemPedido;
-    }
-
-    @Override
-    @Transactional(value = Transactional.TxType.REQUIRED)
-    public Pedido atualizarPedido(Pedido pedido) throws ValidadorException {
-        Pedido pedidoAtualizar = recalcularValorTotalPedido(pedido);
-        if (Objects.nonNull(pedidoAtualizar))
-            this.pedidoRepository.save(pedidoAtualizar);
-        return pedidoAtualizar;
     }
 
     @Override
@@ -134,22 +131,41 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
     @Override
     public PedidosWrapper adicionarItemLanchePedido(FilterPedido filterPedido) throws ValidadorException {
         PedidosWrapper pedidosWrapper = PedidosWrapper.builder().build();
-        pedidoValidation.validarParamsFilterPedidoAddItemPedido(filterPedido);
 
-        Pedido pedido = pedidoRepository.findById(filterPedido.getIdPedido()).get();
-        pedidoValidation.validarSomentePedido(pedido);
+        FilterPedido filterPedidoNovo = extrairFilterPedidoContendoDependenciaValidas(filterPedido);
+        Pedido pedido = filterPedidoNovo.getPedido();
+        Lanche lanche = filterPedidoNovo.getLanche();
 
-        Lanche lanche = recuperarLanche(Lanche.builder().id(filterPedido.getIdLanche()).build());
-        lancheValidation.validarSomenteLanche(lanche);
-
-        ItemPedido itemPedido = itemPedidoRepository.findByPedidoAndLanche(pedido, lanche);
+        ItemPedido itemPedido = this.pedidoService.recuperarItemPedidoPor(pedido, lanche);
 
         itemPedido = Objects.isNull(itemPedido) ? createNovoItemPedido(pedido, lanche, filterPedido.getQtde())
                 : updateItemPedidoAPartir(itemPedido, filterPedido.getQtde());
 
         processarItem(itemPedido);
-        pedidosWrapper.add(atualizarPedido(pedido));
+        pedidosWrapper.add(pedidoService.atualizarPedido(pedido));
         return pedidosWrapper;
+    }
+
+    private FilterPedido extrairFilterPedidoContendoDependenciaValidas(FilterPedido filterPedido) throws ValidadorException {
+        pedidoValidation.validarParamsFilterPedidoAddItemPedido(filterPedido);
+
+        Pedido pedido = this.pedidoService.recuperarPorId(filterPedido.getIdPedido());
+        pedidoValidation.validarSomentePedido(pedido);
+
+        Lanche lanche = recuperarLanche(Lanche.builder().id(filterPedido.getIdLanche()).build());
+        lancheValidation.validarSomenteLanche(lanche);
+
+        return FilterPedido.builder()
+                .qtde(filterPedido.getQtde())
+                .pedido(pedido)
+                .lanche(lanche)
+                .build();
+
+    }
+
+    @Override
+    public PedidosWrapper adicionarIngredienteAdicionaAItemPedido(FilterPedido filterPedido) throws ValidadorException {
+        return null;
     }
 
     private ItemPedido updateItemPedidoAPartir(ItemPedido itemPedido, BigDecimal qtde) {
@@ -159,12 +175,17 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
         return itemPedido;
     }
 
-    private ItemPedido createNovoItemPedido(Pedido pedido, Lanche lanche, BigDecimal qtde) {
-        Integer valorUltimoItemAdicionado = itemPedidoRepository.recuperarUltimoValorItemAdicionado(pedido.getId());
+    private ItemPedido createNovoItemPedido(Pedido pedido, Lanche lanche, BigDecimal qtde) throws ValidadorException {
+        this.pedidoValidation.validarParamsFilterPedidoAddItemPedidoWithInstancias(FilterPedido.builder()
+                .pedido(pedido)
+                .lanche(lanche)
+                .qtde(qtde).build());
+
+        Integer valorUltimoItemAdicionado = this.pedidoService.recuperarUltimoValorItemAdicionado(pedido.getId());
         ItemPedido itemPedido = ItemPedido.builder()
                 .lanche(lanche)
                 .pedido(pedido)
-                .item(valorUltimoItemAdicionado)
+                .item(valorUltimoItemAdicionado + 1)
                 .quantidade(qtde)
                 .build();
         itemPedido.gerarDataCorrente();
@@ -178,30 +199,11 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
             return null;
 
         if (isDeveRecuperarLancheCompleto(lanche))
-            lanche = lancheService.recuperarPorId(lanche.getId());
-
+            return lancheService.recuperarPorId(lanche.getId());
         return lanche;
     }
 
     private boolean isDeveRecuperarLancheCompleto(Lanche lanche) {
         return (Objects.isNull(lanche.getValorTotal()) || lanche.getValorTotal().compareTo(BigDecimal.ZERO) == 0);
-    }
-
-    @Override
-    public Pedido recalcularValorTotalPedido(Pedido pedido) throws ValidadorException {
-        this.pedidoValidation.validarIdReferentePedido(pedido);
-        return recalcularValorTotalPedido(pedido.getId());
-    }
-
-    @Override
-    public Pedido recalcularValorTotalPedido(Long idPedido) {
-        return this.pedidoRepository.findById(idPedido)
-                .map(p -> {
-                    p.calculaValorItens();
-                    p.calcularValorTotalDesconto();
-                    p.calculaValorTotal();
-                    p.gerarDataCorrente();
-                    return p;
-                }).orElse(null);
     }
 }

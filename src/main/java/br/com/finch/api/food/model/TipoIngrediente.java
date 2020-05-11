@@ -17,7 +17,7 @@ import java.util.Objects;
 @ToString
 @JacksonXmlRootElement(localName = "TipoIngrediente")
 @Entity
-@Table(name = "fd06_tipo_ingrediente", schema = "food_service")
+@Table(name = "fd07_tipo_ingrediente", schema = "food_service")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class TipoIngrediente extends AbstractEntity {
 

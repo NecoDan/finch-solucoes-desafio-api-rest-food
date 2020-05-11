@@ -13,6 +13,6 @@ public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long> {
 
     ItemPedido findByPedidoAndLanche(Pedido pedido, Lanche lanche);
 
-    @Query(value = "select max(item) from food_service.fd05_item_lanche_pedido where id_lanche_pedido = :#{#idPedido} order by item", nativeQuery = true)
+    @Query(value = "select max(item) from food_service.fd05_item_lanche_pedido where id_lanche_pedido = :#{#idPedido}", nativeQuery = true)
     Integer recuperarUltimoValorItemAdicionado(@Param("idPedido") Long idPedido);
 }

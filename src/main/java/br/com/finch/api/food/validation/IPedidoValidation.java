@@ -12,6 +12,8 @@ public interface IPedidoValidation {
 
     void validarParamsFilterPedidoAddItemPedido(FilterPedido filterPedido) throws ValidadorException;
 
+    void validarParamsFilterPedidoAddItemPedidoWithInstancias(FilterPedido filterPedido) throws ValidadorException;
+
     void validarIdReferentePedido(Pedido pedido) throws ValidadorException;
 
     void validarSomenteItemPedidoLanche(ItemPedido itemPedido) throws ValidadorException;

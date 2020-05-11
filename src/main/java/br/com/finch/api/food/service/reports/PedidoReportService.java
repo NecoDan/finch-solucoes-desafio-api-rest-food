@@ -14,7 +14,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LanchePedidoReportService implements ILanchePedidoReportService {
+public class PedidoReportService implements IPedidoReportService {
 
     private final PedidoRepository pedidoRepository;
 

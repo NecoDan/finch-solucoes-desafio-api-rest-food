@@ -57,14 +57,14 @@ public class ItemPedido extends AbstractEntity {
 
     @Setter(AccessLevel.NONE)
     @DecimalMin(value = "0.0", inclusive = true)
-    @Digits(integer = 19, fraction = 2)
+    @Digits(integer = 19, fraction = 6)
     @JacksonXmlProperty
     @Column(name = "valor_item")
     private BigDecimal valorItem;
 
     @Setter(AccessLevel.NONE)
     @DecimalMin(value = "0.0", inclusive = true)
-    @Digits(integer = 19, fraction = 2)
+    @Digits(integer = 19, fraction = 6)
     @JacksonXmlProperty
     @Column(name = "valor_total")
     private BigDecimal valorTotal;

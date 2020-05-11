@@ -19,7 +19,7 @@ public class PedidoValidation implements IPedidoValidation {
     @Override
     public void validarSomentePedido(Pedido pedido) throws ValidadorException {
         if (Objects.isNull(pedido))
-            throw new ValidadorException("Pedido encontra-se inválido e/ou inexistente [NULO].");
+            throw new ValidadorException("Nenhum Pedido encontrado. Pedido, encontra-se inválido e/ou inexistente [NULO].");
     }
 
     @Override
@@ -28,31 +28,47 @@ public class PedidoValidation implements IPedidoValidation {
             throw new ValidadorException("Parametros pra adicionar um novo item encontra-se inválido ou inexistente [NULO].");
 
         if (Objects.isNull(filterPedido.getIdPedido()) || filterPedido.getIdPedido().equals(0L))
-            throw new ValidadorException("O [ID] referente ao Pedido encontra-se inválido e/ou inexistente [NULO].");
+            throw new ValidadorException("Nenhum Pedido encontrado. O [ID] referente ao Pedido encontra-se inválido e/ou inexistente [NULO].");
 
         if (Objects.isNull(filterPedido.getIdLanche()))
-            throw new ValidadorException("O [ID] referente ao Lanche encontra-se inválido e/ou inexistente [NULO].");
+            throw new ValidadorException("Nenhum Lanche encontrado. O [ID] referente ao Lanche encontra-se inválido e/ou inexistente [NULO].");
 
-        if (Objects.isNull(filterPedido.getQtde()) || filterPedido.getQtde().compareTo(BigDecimal.ZERO) != 0)
+        if (Objects.isNull(filterPedido.getQtde()) || filterPedido.getQtde().compareTo(BigDecimal.ZERO) == 0)
             throw new ValidadorException("A quantidade a ser inserida ao item encontra-se inválida e/ou inexistente [NULA] ou valor igual à zero (0).");
+    }
+
+    @Override
+    public void validarParamsFilterPedidoAddItemPedidoWithInstancias(FilterPedido filterPedido) throws ValidadorException {
+        if (Objects.isNull(filterPedido))
+            throw new ValidadorException("Parametros pra adicionar um novo item encontra-se inválido ou inexistente [NULO].");
+
+        if (Objects.isNull(filterPedido.getPedido()) || Objects.isNull(filterPedido.getPedido().getId()))
+            throw new ValidadorException("Nenhum Pedido encontrado. Pedido ou o [ID] referente ao Pedido encontra-se inválido e/ou inexistente [NULO].");
+
+        if (Objects.isNull(filterPedido.getLanche()) || Objects.isNull(filterPedido.getLanche().getId()))
+            throw new ValidadorException("Nenhum Lanche encontraod. Lanche ou o [ID] referente ao Lanche encontra-se inválido e/ou inexistente [NULO].");
+
+        if (Objects.isNull(filterPedido.getQtde()) || filterPedido.getQtde().compareTo(BigDecimal.ZERO) == 0)
+            throw new ValidadorException("A quantidade a ser inserida ao item encontra-se inválida e/ou inexistente [NULA] ou valor igual à zero (0).");
+
     }
 
     @Override
     public void validarIdReferentePedido(Pedido pedido) throws ValidadorException {
         if (Objects.nonNull(pedido) && Objects.isNull(pedido.getId()))
-            throw new ValidadorException("Pedido encontra-se com a referência do [ID] inválida e/ou inexistente [NULA].");
+            throw new ValidadorException("Nenhum Pedido encontrao. Pedido encontra-se com a referência do [ID] inválida e/ou inexistente [NULA].");
     }
 
     @Override
     public void validarSomenteItemPedidoLanche(ItemPedido itemPedido) throws ValidadorException {
         if (Objects.isNull(itemPedido))
-            throw new ValidadorException("Item contido no Pedido encontra-se inválido e/ou inexistente [NULO].");
+            throw new ValidadorException("Nenhum item do pedido encontrado. O Item contido no Pedido encontra-se inválido e/ou inexistente [NULO].");
     }
 
     @Override
     public void validarIdReferenteItemPedido(ItemPedido itemPedido) throws ValidadorException {
         if (Objects.isNull(itemPedido.getId()))
-            throw new ValidadorException("Item contido no Pedido encontra-se com a referência do [ID] inválida e/ou inexistente [NULA].");
+            throw new ValidadorException("Nenhum item do pedido encontrado. O Item contido no Pedido encontra-se com a referência do [ID] inválida e/ou inexistente [NULA].");
     }
 
     @Override

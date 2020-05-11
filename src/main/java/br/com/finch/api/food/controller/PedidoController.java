@@ -4,8 +4,7 @@ import br.com.finch.api.food.model.Pedido;
 import br.com.finch.api.food.model.dtos.FilterPedido;
 import br.com.finch.api.food.model.dtos.PedidosWrapper;
 import br.com.finch.api.food.service.IGeradorPedidoLancheService;
-import br.com.finch.api.food.service.IPedidoService;
-import br.com.finch.api.food.service.reports.ILanchePedidoReportService;
+import br.com.finch.api.food.service.reports.IPedidoReportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +25,10 @@ import java.util.Objects;
 @Validated
 @RequestMapping(path = "pedidos")
 @RequiredArgsConstructor
-@Api(value = "LanchePedido")
+@Api(value = "Pedido")
 public class PedidoController {
 
-    private final ILanchePedidoReportService lanchePedidoReportService;
-    private final IPedidoService pedidoService;
+    private final IPedidoReportService pedidoReportService;
     private final IGeradorPedidoLancheService geradorPedidoLancheService;
 
     @ApiOperation(value = "Retornar todos os pedidos de lanches existentes...")
@@ -55,7 +53,7 @@ public class PedidoController {
     @GetMapping(path = "/{pedidoId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> buscarPorId(@PathVariable Long pedidoId) {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarPorId(pedidoId));
+            return getResponseDefault(pedidoReportService.listarPorId(pedidoId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -84,9 +82,8 @@ public class PedidoController {
     }
 
     @ApiOperation(value = "Responsável por adicionar um novo item ao Pedido, a partir de um @RequestParam contendo o [ID] do registro pedido e o [ID] do registro Lanche...")
-    @PostMapping(path = "/adicionaItem/{pedidoId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> adicionarItem(@PathVariable Long pedidoId, @RequestParam("lancheId") Long lancheId, @RequestParam("qtde") BigDecimal qtde) {
+    @PutMapping(path = "/adicionaItem/{pedidoId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> adicionarItem(@PathVariable("pedidoId") Long pedidoId, @RequestParam("lancheId") Long lancheId, @RequestParam("qtde") BigDecimal qtde) {
         try {
             return new ResponseEntity<>(geradorPedidoLancheService.adicionarItemLanchePedido(FilterPedido.builder()
                     .idLanche(lancheId)
@@ -98,11 +95,28 @@ public class PedidoController {
         }
     }
 
+    @ApiOperation(value = "Responsável por adicionar um novo item ao Pedido, a partir de um @RequestParam contendo o [ID] do registro pedido e o [ID] do registro Lanche...")
+    @PutMapping(path = "/adicionaPorcaoItem/{pedidoId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> adicionarPorcaoAdicionalItem(@PathVariable("pedidoId") Long pedidoId, @RequestParam("lancheId") Long lancheId,
+                                                          @RequestParam("ingredienteId") Long ingredienteId,
+                                                          @RequestParam("qtde") BigDecimal qtde) {
+        try {
+            return new ResponseEntity<>(geradorPedidoLancheService.adicionarItemLanchePedido(FilterPedido.builder()
+                    .idLanche(lancheId)
+                    .idPedido(pedidoId)
+                    .qtde(qtde)
+                    .build()), HttpStatus.CREATED);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar pedido(s): " + ex.getMessage());
+        }
+    }
+
+
     @ApiOperation(value = "Retorna todos os pedidos de lanches, a partir do filtro <b>valor</b> que estejam igual ou maior ao passado como parâmetro ...")
     @GetMapping(path = "/buscarPorValorIgualOuMaior", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorValorMaiorOuIgual(@RequestParam("valor") BigDecimal valor) {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarPorValorMaiorOuIgualQue(valor));
+            return getResponseDefault(pedidoReportService.listarPorValorMaiorOuIgualQue(valor));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -112,7 +126,7 @@ public class PedidoController {
     @GetMapping(path = "/buscarPorValorIgualOuMenor", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorValorMenorOuIgual(@RequestParam("valor") BigDecimal valor) {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarPorValorMenorOuIgualQue(valor));
+            return getResponseDefault(pedidoReportService.listarPorValorMenorOuIgualQue(valor));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -122,7 +136,7 @@ public class PedidoController {
     @GetMapping(path = "/buscarPorDataCadastro", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorDataCadastro(@RequestParam("data") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate data) {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarPorDataInsercao(data));
+            return getResponseDefault(pedidoReportService.listarPorDataInsercao(data));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -132,7 +146,7 @@ public class PedidoController {
     @GetMapping(path = "/buscarPorNomeCliente", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> listAllPorNomeCliente(@RequestParam("nomeCliente") String nomeCliente) {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarPorNomeCliente(nomeCliente));
+            return getResponseDefault(pedidoReportService.listarPorNomeCliente(nomeCliente));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -143,7 +157,7 @@ public class PedidoController {
     public ResponseEntity<?> listAllPorPeriodo(@RequestParam("dataInicio") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dataInicio,
                                                @RequestParam("dataFim") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dataFim) {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarPorPeriodo(dataInicio, dataFim));
+            return getResponseDefault(pedidoReportService.listarPorPeriodo(dataInicio, dataFim));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -158,7 +172,7 @@ public class PedidoController {
 
     private ResponseEntity<?> retornarListaPedidos() {
         try {
-            return getResponseDefault(lanchePedidoReportService.listarTodos());
+            return getResponseDefault(pedidoReportService.listarTodos());
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao executar a busca de dados: " + ex.getMessage());
         }
