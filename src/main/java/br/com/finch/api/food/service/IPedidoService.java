@@ -7,6 +7,7 @@ import br.com.finch.api.food.model.Pedido;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Daniel Santos
@@ -16,6 +17,8 @@ public interface IPedidoService {
     Pedido atualizarPedido(Pedido pedido) throws ValidadorException;
 
     Pedido recuperarPorId(Long id);
+
+    Optional<Pedido> recuperar(Long id);
 
     Pedido salvar(Pedido pedido) throws ValidadorException;
 

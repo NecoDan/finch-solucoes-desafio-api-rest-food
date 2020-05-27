@@ -70,6 +70,7 @@ public class Pedido extends AbstractEntity {
     // @Transient
     @OneToMany(mappedBy = "pedido", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JacksonXmlProperty
+    @NotEmpty
     private List<ItemPedido> itens = new ArrayList<>();
 
 //    @Transien

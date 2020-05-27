@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Daniel Santos
@@ -35,6 +36,11 @@ public class PedidoService implements IPedidoService {
     @Override
     public Pedido recuperarPorId(Long id) {
         return pedidoRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Optional<Pedido> recuperar(Long id) {
+        return pedidoRepository.findById(id);
     }
 
     @Override

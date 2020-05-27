@@ -15,6 +15,8 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +52,8 @@ public class ItemPedido extends AbstractEntity {
     private Integer item;
 
     @JacksonXmlProperty
+    @Min(1)
+    @PositiveOrZero
     @DecimalMin(value = "1.0", inclusive = true)
     @Digits(integer = 19, fraction = 6)
     @Column(name = "qtde")
