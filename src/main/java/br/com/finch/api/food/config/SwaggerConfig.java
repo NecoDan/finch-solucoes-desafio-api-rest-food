@@ -19,10 +19,11 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     @Bean
     public Docket greetingApi() {
         return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(RequestHandlerSelectors.basePackage("br.com.finch.api.food"))
+                .apis(RequestHandlerSelectors.basePackage("br.com.finch.api.food")) // posso alterar disponiblizando todas as apis
                 .paths(PathSelectors.any())
                 .build()
-                .apiInfo(metaDataAppInfo());
+                .apiInfo(metaDataAppInfo())
+                .useDefaultResponseMessages(false);
     }
 
     private ApiInfo metaDataAppInfo() {

@@ -7,6 +7,8 @@ import br.com.finch.api.food.service.ILancheService;
 import br.com.finch.api.food.service.reports.ILancheReportsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -50,6 +52,7 @@ public class LancheController {
         return retornarListaLanches();
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Lanche localizado sucesso"), @ApiResponse(code = 404, message = "Not found! Não encontrado")})
     @ApiOperation(value = "Retorna um único lanches existente, a partir de seu id registrado...")
     @GetMapping(path = "/{lancheId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> buscarPorId(@PathVariable Long lancheId) {
@@ -60,6 +63,7 @@ public class LancheController {
         }
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Lanche criado com sucesso")})
     @ApiOperation(value = "Responsável por persistir uma única instância de Lanche, a partir de um filtro consumer como corpo da requisição...")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -71,6 +75,7 @@ public class LancheController {
         }
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Lanche(s) criado com sucesso")})
     @ApiOperation(value = "Responsável por persistir múltiplas instâncias de Lanche, a partir de um filtro consumer como corpo da requisição...")
     @PostMapping(path = "/salvarVarios", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
