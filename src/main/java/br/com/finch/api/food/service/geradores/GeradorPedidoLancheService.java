@@ -1,8 +1,11 @@
-package br.com.finch.api.food.service;
+package br.com.finch.api.food.service.geradores;
 
 import br.com.finch.api.food.model.*;
 import br.com.finch.api.food.model.dtos.FilterPedido;
 import br.com.finch.api.food.model.dtos.PedidosWrapper;
+import br.com.finch.api.food.service.IIngredienteService;
+import br.com.finch.api.food.service.ILancheService;
+import br.com.finch.api.food.service.IPedidoService;
 import br.com.finch.api.food.service.negocio.Promocao;
 import br.com.finch.api.food.service.strategy.IBuilderPromocaoService;
 import br.com.finch.api.food.util.exceptions.ValidadorException;

@@ -201,6 +201,11 @@ public class LancheController {
         }
     }
 
+    @GetMapping("/testException")
+    public void testException() {
+        Integer x = 2 / 0;
+    }
+
     private ResponseEntity<?> getResponseDefault(LanchesWrapper lanchesWrapper) {
         if (Objects.isNull(lanchesWrapper) || (lanchesWrapper.getLanches().isEmpty()))
             return ResponseEntity.notFound().build();

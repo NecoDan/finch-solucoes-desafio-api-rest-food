@@ -176,6 +176,11 @@ public class IngredienteController {
         }
     }
 
+    @GetMapping("/testException")
+    public void testException() {
+        Integer x = 2 / 0;
+    }
+
     private ResponseEntity<?> getResponseDefault(IngredientesWrapper ingredientesWrapper) {
         if (Objects.isNull(ingredientesWrapper) || (ingredientesWrapper.getIngredientes().isEmpty()))
             return ResponseEntity.notFound().build();

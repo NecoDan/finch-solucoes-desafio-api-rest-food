@@ -1,4 +1,4 @@
-package br.com.finch.api.food.service;
+package br.com.finch.api.food.service.geradores;
 
 import br.com.finch.api.food.model.ItemPedido;
 import br.com.finch.api.food.model.Pedido;

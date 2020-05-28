@@ -3,7 +3,7 @@ package br.com.finch.api.food.controller;
 import br.com.finch.api.food.model.Pedido;
 import br.com.finch.api.food.model.dtos.FilterPedido;
 import br.com.finch.api.food.model.dtos.PedidosWrapper;
-import br.com.finch.api.food.service.IGeradorPedidoLancheService;
+import br.com.finch.api.food.service.geradores.IGeradorPedidoLancheService;
 import br.com.finch.api.food.service.reports.IPedidoReportService;
 import br.com.finch.api.food.util.exceptions.ResourceStatusNotFoundException;
 import io.swagger.annotations.Api;
