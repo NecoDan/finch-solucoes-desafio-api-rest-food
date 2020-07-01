@@ -1,4 +1,4 @@
-package br.com.finch.api.food.service.geradores;
+package br.com.finch.api.food.service.generate;
 
 import br.com.finch.api.food.model.*;
 import br.com.finch.api.food.model.dtos.FilterPedido;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
+public class GeraPedidoLancheService implements IGeraPedidoLancheService {
 
     private final IPedidoService pedidoService;
     private final ILancheService lancheService;
