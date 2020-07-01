@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class CalculadoraDescontoQtdePorcoes {
 
     public BigDecimal efetuarCalculoDescontoNaPromocaoPor(ItemPedido itemPedido, TipoIngrediente tipoIngrediente) {
-        return obterValorDesconto(itemPedido, tipoIngrediente).setScale(2, BigDecimal.ROUND_UP);
+        return obterValorDesconto(itemPedido, tipoIngrediente).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public boolean isParamInvalidos(ItemPedido itemPedido) {
