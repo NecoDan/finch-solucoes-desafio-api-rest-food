@@ -11,9 +11,9 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ResourceNotFoundDetails {
 
-    private String titulo;
-    private int status;
-    private String detalhes;
-    private Long timestamp;
-    private String mensagem;
+    private final String titulo;
+    private final int status;
+    private final String detalhes;
+    private final Long timestamp;
+    private final String mensagem;
 }

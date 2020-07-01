@@ -2,13 +2,13 @@ package br.com.finch.api.food.util.domain;
 
 public class CustomErrorType {
 
-	private String erroMensagem;
+    private final String erroMensagem;
 
-	public CustomErrorType(String erroMensagem) {
-		this.erroMensagem = erroMensagem;
-	}
+    public CustomErrorType(String erroMensagem) {
+        this.erroMensagem = erroMensagem;
+    }
 
-	public String getErroMensagem() {
-		return erroMensagem;
-	}
+    public String getErroMensagem() {
+        return erroMensagem;
+    }
 }

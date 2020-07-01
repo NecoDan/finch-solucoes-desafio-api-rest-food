@@ -46,7 +46,7 @@
    
  - Retornar uma lista de pedidos a partir dos filtros como parametros:   
      - `http://localhost:8080/pedidos/buscarPorNomeCliente?nomeCliente=Maria`
-     - `http://localhost:8080/pedidos/buscarPorPeriodo?dataInicio=01/01/2020&dataFim=01/06/2020`
+     - `http://localhost:8080/pedidos/buscaPorPeriodo?dataInicio=01/01/2020&dataFim=01/06/2020`
      - `http://localhost:8080/pedidos/buscarPorValorIgualOuMaior?valor=10.00`
      
  Entre outros, aos quais podem ser identificados no endereço fornecido pelo Swagger: <link>http://localhost:8080/swagger-ui.html.

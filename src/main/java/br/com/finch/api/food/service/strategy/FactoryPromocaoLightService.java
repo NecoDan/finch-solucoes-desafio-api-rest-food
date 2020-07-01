@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class FactoryPromocaoLightService implements IFactoryPromocaoService {
 
-    private final static String PARAM_VALIDACAO_INGREDIENTE_ALFACE = "Alface";
+    private static final String PARAM_VALIDACAO_INGREDIENTE_ALFACE = "Alface";
 
     @Override
     public boolean isAppliable(ItemPedido itemPedido) {

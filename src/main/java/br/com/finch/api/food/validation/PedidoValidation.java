@@ -50,7 +50,6 @@ public class PedidoValidation implements IPedidoValidation {
 
         if (Objects.isNull(filterPedido.getQtde()) || filterPedido.getQtde().compareTo(BigDecimal.ZERO) == 0)
             throw new ValidadorException("A quantidade a ser inserida ao item encontra-se inválida e/ou inexistente [NULA] ou valor igual à zero (0).");
-
     }
 
     @Override

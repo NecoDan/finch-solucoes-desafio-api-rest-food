@@ -23,7 +23,7 @@ public class IngredienteService implements IIngredienteService {
     private final IIngredienteValidation ingredienteValidation;
 
     @Override
-    public Ingrediente recuperarPorId(Long id)  {
+    public Ingrediente recuperarPorId(Long id) {
         return this.ingredienteRepository.findById(id).orElse(null);
     }
 

@@ -3,12 +3,14 @@ package br.com.finch.api.food.service.negocio;
 import br.com.finch.api.food.model.ItemPedido;
 import br.com.finch.api.food.model.TipoIngrediente;
 import br.com.finch.api.food.model.domain.CalculadoraDescontoQtdePorcoes;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class PromocaoMuitaCarne implements IRegraCalculoPromocao {
 
     @Override

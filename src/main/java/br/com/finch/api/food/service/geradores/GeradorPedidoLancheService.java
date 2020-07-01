@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
 
     private final IPedidoService pedidoService;
@@ -94,7 +95,7 @@ public class GeradorPedidoLancheService implements IGeradorPedidoLancheService {
         gerarAdicionalItemPedido(itemPedido);
         itemPedido.calculaValorTotal();
 
-        Promocao promocao = builderPromocaoService.obterPromocaoAPartir(itemPedido);
+        Promocao promocao = this.builderPromocaoService.obterPromocaoAPartir(itemPedido);
         itemPedido.aplicarPromocao(promocao);
         itemPedido = this.pedidoService.salvarItem(itemPedido);
 

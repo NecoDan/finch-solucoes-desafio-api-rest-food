@@ -30,7 +30,7 @@ public class IngredientesWrapper {
         this.ingredientes.add(ingrediente);
     }
 
-    public IngredientesWrapper adicionar(Ingrediente ingrediente){
+    public IngredientesWrapper adicionar(Ingrediente ingrediente) {
         this.add(ingrediente);
         return this;
     }

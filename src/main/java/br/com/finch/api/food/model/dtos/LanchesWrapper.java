@@ -17,7 +17,7 @@ import java.util.Objects;
 @ToString
 @JacksonXmlRootElement(localName = "Lanches")
 @AllArgsConstructor
-public class LanchesWrapper implements Serializable{
+public class LanchesWrapper implements Serializable {
 
     private static final long serialVersionUID = 22L;
 

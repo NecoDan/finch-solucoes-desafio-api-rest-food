@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,7 +58,7 @@ public class CalculadoraDescontoQtdePorcoes {
             return BigDecimal.ZERO;
 
         BigDecimal valor = qtdeCarneAdicionada.multiply(BigDecimal.valueOf(2));
-        valor = valor.divide(BigDecimal.valueOf(3));
+        valor = valor.divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_EVEN);
         return valor;
     }
 
@@ -81,7 +82,7 @@ public class CalculadoraDescontoQtdePorcoes {
                 .filter(a -> isContainsTipoIngrediente(tipoIngrediente, a))
                 .mapToDouble(AdicionalItemPedido::getQuantidadeNumeric)
                 .sum())
-                .setScale(2, BigDecimal.ROUND_UP);
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private boolean isValidaFilterAdicionalWithIngrediente(AdicionalItemPedido adicionalItemPedido, TipoIngrediente tipoIngrediente) {

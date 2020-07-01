@@ -3,10 +3,12 @@ package br.com.finch.api.food.util.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.Tolerate;
-import net.bytebuddy.implementation.bind.annotation.Super;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -37,7 +39,7 @@ public class AbstractEntity implements Serializable {
     @JacksonXmlProperty
     @Setter(value = AccessLevel.PUBLIC)
     @Column(name = "ativo", columnDefinition = "tinyint(1) default 1", nullable = false)
-    private boolean ativo = true;
+    private boolean ativo;
 
     @Tolerate
     public AbstractEntity() {

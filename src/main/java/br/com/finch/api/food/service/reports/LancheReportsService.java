@@ -1,5 +1,6 @@
 package br.com.finch.api.food.service.reports;
 
+import br.com.finch.api.food.model.Lanche;
 import br.com.finch.api.food.model.dtos.LanchesWrapper;
 import br.com.finch.api.food.repository.LancheRepository;
 import br.com.finch.api.food.service.ILancheService;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,27 +25,28 @@ public class LancheReportsService implements ILancheReportsService {
 
     @Override
     public LanchesWrapper listarPorId(Long id) throws ValidadorException {
-        return LanchesWrapper.builder().build().adicionar(this.lancheService.recuperarPorId(id));
+        Optional<Lanche> lancheOptional = this.lancheRepository.findById(id);
+        return lancheOptional.map(lanche -> getWrapper(Collections.singletonList(lanche))).orElse(getWrapper(Collections.emptyList()));
     }
 
     @Override
     public LanchesWrapper listarTodos() {
-        return LanchesWrapper.builder().lanches(this.lancheService.recuperarTodos()).build();
+        return getWrapper(this.lancheService.recuperarTodos());
     }
 
     @Override
     public LanchesWrapper listarAtivos() {
-        return LanchesWrapper.builder().lanches(this.lancheService.recuperarAtivos()).build();
+        return getWrapper(this.lancheService.recuperarAtivos());
     }
 
     @Override
     public LanchesWrapper listarInativos() {
-        return LanchesWrapper.builder().lanches(this.lancheService.recuperarInativos()).build();
+        return getWrapper(this.lancheService.recuperarInativos());
     }
 
     @Override
     public LanchesWrapper listarPorDescricaoNome(String descricao) throws ValidadorException {
-        return LanchesWrapper.builder().lanches(this.lancheService.recuperarPorDescricao(descricao)).build();
+        return getWrapper(this.lancheService.recuperarPorDescricao(descricao));
     }
 
     @Override
@@ -53,18 +58,20 @@ public class LancheReportsService implements ILancheReportsService {
 
     @Override
     public LanchesWrapper listarPorValorMenorOuIgualQue(BigDecimal valor) throws ValidadorException {
-        return LanchesWrapper.builder()
-                .lanches(lancheRepository.findAllByValorTotalIsNotNullAndValorTotalLessThanEqual(valor))
-                .build();
+        return getWrapper(lancheRepository.findAllByValorTotalIsNotNullAndValorTotalLessThanEqual(valor));
     }
 
     @Override
     public LanchesWrapper listarPorDataInsercao(LocalDate data) throws ValidadorException {
-        return LanchesWrapper.builder().lanches(lancheRepository.recuperarTodosPorDataInsercao(data)).build();
+        return getWrapper(this.lancheRepository.recuperarTodosPorDataInsercao(data));
     }
 
     @Override
     public LanchesWrapper listarPorPeriodo(LocalDate dataInicio, LocalDate dataFim) throws ValidadorException {
-        return LanchesWrapper.builder().lanches(lancheRepository.recuperarTodosPorPeriodo(dataInicio, dataFim)).build();
+        return getWrapper(this.lancheRepository.recuperarTodosPorPeriodo(dataInicio, dataFim));
+    }
+
+    private LanchesWrapper getWrapper(List<Lanche> lanches) {
+        return LanchesWrapper.builder().lanches(lanches).build();
     }
 }

@@ -1,15 +1,17 @@
 package br.com.finch.api.food.service.negocio;
 
 import br.com.finch.api.food.model.ItemPedido;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class PromocaoLight implements IRegraCalculoPromocao {
 
-    private final static double VALOR_DESCONTO_DEZ_POR_CENTO = 10.00;
+    private static final double VALOR_DESCONTO_DEZ_POR_CENTO = 10.00;
 
     @Override
     public BigDecimal calculaDescontoNaPromocao(ItemPedido itemPedido) {

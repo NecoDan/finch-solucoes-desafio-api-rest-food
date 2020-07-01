@@ -1,7 +1,8 @@
 package br.com.finch.api.food.util.exceptions;
 
 public class ValidadorException extends Exception {
-    public ValidadorException() {}
+    public ValidadorException() {
+    }
 
     public ValidadorException(String s) {
         super(s);
