@@ -1,11 +1,15 @@
-package br.com.finch.api.food.util;
+package br.com.finch.api.food.util.utilitarios;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class ConverterUtil {
+public final class ConverterUtil {
+
+    private ConverterUtil() {
+
+    }
 
     public static <T> Object convertJSONFromStringToObjeto(String conteudoJSON, Class<T> objectClass) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

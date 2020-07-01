@@ -3,7 +3,7 @@ package br.com.finch.api.food.controller;
 import br.com.finch.api.food.model.Ingrediente;
 import br.com.finch.api.food.model.Lanche;
 import br.com.finch.api.food.model.dtos.LanchesWrapper;
-import br.com.finch.api.food.service.ILancheService;
+import br.com.finch.api.food.service.generate.IGeraLancheService;
 import br.com.finch.api.food.service.reports.ILancheReportsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +29,7 @@ import java.util.Objects;
 @Api(value = "Lanche")
 public class LancheController {
 
-    private final ILancheService lancheService;
+    private final IGeraLancheService geraLancheService;
     private final ILancheReportsService lancheReportsService;
 
     @ApiOperation(value = "Retornar todos os lanches existentes...")
@@ -54,7 +54,7 @@ public class LancheController {
     @GetMapping(path = "/{lancheId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> buscarPorId(@PathVariable Long lancheId) {
         try {
-            return getResponseDefault(lancheReportsService.listarPorId(lancheId));
+            return getResponseDefault(this.lancheReportsService.listarPorId(lancheId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("error", e.getMessage()).build();
         }
@@ -65,7 +65,7 @@ public class LancheController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> save(@RequestBody Lanche lanche) {
         try {
-            return new ResponseEntity<>(lancheService.gerar(Collections.singletonList(lanche)), HttpStatus.CREATED);
+            return new ResponseEntity<>(this.geraLancheService.gerar(Collections.singletonList(lanche)), HttpStatus.CREATED);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar lanches(s): " + ex.getMessage());
         }
@@ -76,7 +76,7 @@ public class LancheController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> saveAll(@RequestBody List<Lanche> lancheList) {
         try {
-            return new ResponseEntity<>(lancheService.gerar(lancheList), HttpStatus.CREATED);
+            return new ResponseEntity<>(this.geraLancheService.gerar(lancheList), HttpStatus.CREATED);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar lanches(s): " + ex.getMessage());
         }
@@ -86,7 +86,7 @@ public class LancheController {
     @PutMapping("/{lancheId}")
     public ResponseEntity<?> atualizar(@PathVariable Long lancheId, @Valid @RequestBody Lanche lanche) {
         try {
-            if (!lancheService.atualizarPor(lancheId, lanche))
+            if (!geraLancheService.atualizarLanchePor(lancheId, lanche))
                 return ResponseEntity.notFound().build();
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
@@ -98,7 +98,7 @@ public class LancheController {
     @DeleteMapping("/{lancheId}")
     public ResponseEntity<?> remover(@PathVariable Long lancheId) {
         try {
-            if (!lancheService.excluir(Lanche.builder().id(lancheId).build()))
+            if (!geraLancheService.excluirLanche(Lanche.builder().id(lancheId).build()))
                 return ResponseEntity.notFound().build();
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
@@ -112,7 +112,7 @@ public class LancheController {
     public ResponseEntity<?> adicionarIngrediente(@RequestParam("lancheId") Long lancheId, @RequestParam("qtde") BigDecimal qtde,
                                                   @RequestBody Ingrediente ingrediente) {
         try {
-            return new ResponseEntity<>(lancheService.adicionarIngrediente(lancheId, qtde, ingrediente), HttpStatus.CREATED);
+            return new ResponseEntity<>(this.geraLancheService.adicionarIngrediente(lancheId, qtde, ingrediente), HttpStatus.CREATED);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar lanche(s): " + ex.getMessage());
         }
@@ -122,9 +122,9 @@ public class LancheController {
     @DeleteMapping(path = "/removeIngrediente")
     public ResponseEntity<?> removerIngrediente(@RequestParam("lancheId") Long lancheId, @RequestParam("ingredienteId") Long ingredienteId) {
         try {
-            if (!lancheService.removerIngrediente(lancheId, Ingrediente.builder().id(ingredienteId).build()))
-                return ResponseEntity.notFound().build();
-            return ResponseEntity.ok().build();
+            return (this.geraLancheService.removerIngrediente(lancheId, Ingrediente.builder().id(ingredienteId).build()))
+                    ? ResponseEntity.ok().build()
+                    : ResponseEntity.notFound().build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao tentar remover lanche(s): " + ex.getMessage());
         }

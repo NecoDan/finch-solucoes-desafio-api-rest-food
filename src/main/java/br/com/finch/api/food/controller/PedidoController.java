@@ -3,7 +3,7 @@ package br.com.finch.api.food.controller;
 import br.com.finch.api.food.model.Pedido;
 import br.com.finch.api.food.model.dtos.FilterPedido;
 import br.com.finch.api.food.model.dtos.PedidosWrapper;
-import br.com.finch.api.food.service.geradores.IGeradorPedidoLancheService;
+import br.com.finch.api.food.service.generate.IGeraPedidoLancheService;
 import br.com.finch.api.food.service.reports.IPedidoReportService;
 import br.com.finch.api.food.util.exceptions.ResourceStatusNotFoundException;
 import io.swagger.annotations.Api;
@@ -33,7 +33,7 @@ import java.util.Objects;
 public class PedidoController {
 
     private final IPedidoReportService pedidoReportService;
-    private final IGeradorPedidoLancheService geradorPedidoLancheService;
+    private final IGeraPedidoLancheService geradorPedidoLancheService;
 
     @ApiOperation(value = "Retornar todos os pedidos de lanches existentes...")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

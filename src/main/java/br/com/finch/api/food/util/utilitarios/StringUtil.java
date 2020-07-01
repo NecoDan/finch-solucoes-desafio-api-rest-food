@@ -1,4 +1,4 @@
-package br.com.finch.api.food.util;
+package br.com.finch.api.food.util.utilitarios;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,7 +17,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class StringUtil {
+public final class StringUtil {
+
+    private StringUtil() {
+
+    }
 
     public static String formatConteudoJSONFrom(String conteudo) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

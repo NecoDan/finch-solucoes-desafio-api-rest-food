@@ -1,4 +1,4 @@
-package br.com.finch.api.food.service.geradores;
+package br.com.finch.api.food.service.generate;
 
 import br.com.finch.api.food.model.ItemPedido;
 import br.com.finch.api.food.model.Pedido;
@@ -8,7 +8,7 @@ import br.com.finch.api.food.util.exceptions.ValidadorException;
 
 import java.util.List;
 
-public interface IGeradorPedidoLancheService {
+public interface IGeraPedidoLancheService {
 
     PedidosWrapper adicionarItemLanchePedido(FilterPedido filterPedido) throws ValidadorException;
 

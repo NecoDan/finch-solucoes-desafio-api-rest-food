@@ -1,9 +1,6 @@
 package br.com.finch.api.food.service;
 
-import br.com.finch.api.food.model.Ingrediente;
-import br.com.finch.api.food.model.ItemLancheIngrediente;
 import br.com.finch.api.food.model.Lanche;
-import br.com.finch.api.food.model.dtos.LanchesWrapper;
 import br.com.finch.api.food.repository.IngredienteRepository;
 import br.com.finch.api.food.repository.LancheRepository;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
@@ -13,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -72,17 +68,6 @@ public class LancheService implements ILancheService {
     }
 
     @Override
-    public LanchesWrapper gerar(List<Lanche> lanches) throws ValidadorException {
-        if (Objects.isNull(lanches) || lanches.isEmpty())
-            throw new ValidadorException("Não existem pedido(s) ou pedido(s) encontram-se inexistente(s) a serem processados pela API.");
-
-        LanchesWrapper lanchesWrapper = LanchesWrapper.builder().build();
-        for (Lanche lanche : lanches)
-            lanchesWrapper.add(salvar(lanche));
-        return lanchesWrapper;
-    }
-
-    @Override
     @Transactional
     public Lanche salvar(Lanche lanche) throws ValidadorException {
         this.lancheValidation.validarLanche(lanche);
@@ -122,70 +107,5 @@ public class LancheService implements ILancheService {
                     this.lancheRepository.deleteById(i.getId());
                     return true;
                 }).orElse(false);
-    }
-
-    @Override
-    @Transactional
-    public LanchesWrapper adicionarIngrediente(Long lancheId, BigDecimal qtde, Ingrediente ingrediente) throws ValidadorException {
-        this.lancheValidation.validarParametrosActionReferenteIngredienteLanche(lancheId, ingrediente);
-        LanchesWrapper lanchesWrapper = LanchesWrapper.builder().build();
-
-        if (verificaExistsParametrosActionReferenteIngredientesLanche(ingrediente, lancheId))
-            return lanchesWrapper;
-
-        ItemLancheIngrediente itemLancheIngrediente = ItemLancheIngrediente.builder()
-                .lanche(Lanche.builder().id(lancheId).build())
-                .ingrediente(ingrediente)
-                .quantidade(qtde)
-                .build()
-                .gerarDataCorrente()
-                .ativado();
-
-        if (lancheRepository.existsItemIngredienteLanche(itemLancheIngrediente)) {
-            this.lancheRepository.atualizarItemIngredienteLanche(itemLancheIngrediente);
-        } else {
-            this.lancheRepository.inserirItemIngredienteLanche(itemLancheIngrediente);
-        }
-
-        lanchesWrapper.add(recalcularValorTotalLanche(recuperarPorId(lancheId)));
-        return lanchesWrapper;
-    }
-
-    @Override
-    @Transactional
-    public boolean removerIngrediente(Long lancheId, Ingrediente ingrediente) throws ValidadorException {
-        this.lancheValidation.validarParametrosActionReferenteIngredienteLanche(lancheId, ingrediente);
-
-        if (verificaExistsParametrosActionReferenteIngredientesLanche(ingrediente, lancheId))
-            return false;
-
-        ItemLancheIngrediente itemLancheIngrediente = ItemLancheIngrediente.builder()
-                .ingrediente(ingrediente)
-                .lanche(Lanche.builder().id(lancheId).build())
-                .build();
-
-        if (lancheRepository.existsItemIngredienteLanche(itemLancheIngrediente))
-            return false;
-
-        this.lancheRepository.removerItemIngredienteLanche(itemLancheIngrediente);
-        recalcularValorTotalLanche(recuperarPorId(lancheId));
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public Lanche recalcularValorTotalLanche(Lanche lanche) throws ValidadorException {
-        this.lancheValidation.validarSomenteLanche(lanche);
-
-        if (Objects.isNull(lanche.getIngredientes()) || lanche.getIngredientes().isEmpty())
-            lanche.addAllIngrediente(this.ingredienteRepository.recuperarIngredientesContidoAoLanche(lanche));
-
-        lanche.recalculaValorTotal(this.lancheRepository.recuperarValorTotalLancheRecalculado(lanche));
-        this.lancheRepository.saveAndFlush(lanche);
-        return lanche;
-    }
-
-    private boolean verificaExistsParametrosActionReferenteIngredientesLanche(Ingrediente ingrediente, Long lancheId) {
-        return !ingredienteRepository.existsById(ingrediente.getId()) || !this.lancheRepository.existsById(lancheId);
     }
 }

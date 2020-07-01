@@ -1,12 +1,15 @@
-package br.com.finch.api.food.util;
+package br.com.finch.api.food.util.utilitarios;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class DateUtil {
+public final class DateUtil {
 
-    private final static String MENSAGEM_VALIDACAO = "Parametro data encontra-se inválida e/ou inexistente.";
+    private DateUtil() {
+    }
+
+    private static final String MENSAGEM_VALIDACAO = "Parametro data encontra-se inválida e/ou inexistente.";
 
     public static LocalDate toLocalDateFromString(String value) {
         if (Objects.nonNull(value)) {
@@ -31,5 +34,4 @@ public class DateUtil {
         }
         throw new IllegalArgumentException(MENSAGEM_VALIDACAO);
     }
-
 }

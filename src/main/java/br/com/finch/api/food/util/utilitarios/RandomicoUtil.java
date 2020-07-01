@@ -1,9 +1,14 @@
-package br.com.finch.api.food.util;
+package br.com.finch.api.food.util.utilitarios;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
-public class RandomicoUtil {
+public final class RandomicoUtil {
+
+    private RandomicoUtil() {
+
+    }
 
     private static int gerarValorRandomico() {
         int min = 1;
@@ -24,7 +29,6 @@ public class RandomicoUtil {
     public static BigDecimal gerarValorRandomicoDecimal() {
         double leftLimit = 1D;
         double rightLimit = 1000D;
-
-        return BigDecimal.valueOf(leftLimit + new Random().nextDouble() * (rightLimit - leftLimit)).setScale(2, BigDecimal.ROUND_UP);
+        return BigDecimal.valueOf(leftLimit + new Random().nextDouble() * (rightLimit - leftLimit)).setScale(2, RoundingMode.HALF_EVEN);
     }
 }
