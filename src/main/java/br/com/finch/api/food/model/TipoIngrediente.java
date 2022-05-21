@@ -21,9 +21,9 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class TipoIngrediente extends AbstractEntity {
 
-    public final static Long TIPO_CARNE = 1L;
-    public final static Long TIPO_QUEIJO = 2L;
-    public final static Long TIPO_BACON = 4L;
+    public static final Long TIPO_CARNE = 1L;
+    public static final Long TIPO_QUEIJO = 2L;
+    public static final Long TIPO_BACON = 4L;
 
     @Tolerate
     public TipoIngrediente() {

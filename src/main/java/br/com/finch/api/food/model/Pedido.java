@@ -14,6 +14,7 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,37 +49,30 @@ public class Pedido extends AbstractEntity {
     @Column(name = "telefone")
     private String telefone;
 
+    @JacksonXmlProperty
     @DecimalMin(value = "0.0", inclusive = true)
     @Digits(integer = 19, fraction = 6)
-    @JacksonXmlProperty
     @Column(name = "valorItens")
     private BigDecimal valorItens = BigDecimal.ZERO;
 
+    @JacksonXmlProperty
     @DecimalMin(value = "0.0", inclusive = true)
     @Digits(integer = 19, fraction = 6)
-    @JacksonXmlProperty
     @Column(name = "valor_desconto_total")
     private BigDecimal valorTotalDesconto = BigDecimal.ZERO;
 
+    @JacksonXmlProperty
     @DecimalMin(value = "0.0", inclusive = true)
     @Digits(integer = 19, fraction = 6)
-    @JacksonXmlProperty
     @Column(name = "valor_total")
     private BigDecimal valorTotal = BigDecimal.ZERO;
 
+    @JacksonXmlProperty
     @Fetch(FetchMode.SELECT)
     // @Transient
     @OneToMany(mappedBy = "pedido", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JacksonXmlProperty
     @NotEmpty
     private List<ItemPedido> itens = new ArrayList<>();
-
-//    @Transien
-//    @JacksonXmlProperty
-//    @JsonGetter(value = "ItensPedido")
-//    public List<ItemPedido> getItensPedido() {
-//        return this.itens;
-//    }
 
     public void gerarDataCorrente() {
         if (Objects.isNull(this.getDataCadastro()))
@@ -99,12 +93,13 @@ public class Pedido extends AbstractEntity {
         if (isNotContainsItens())
             return;
 
-        this.valorTotal = BigDecimal.valueOf(this.itens.stream()
+        this.valorTotal = BigDecimal.valueOf(this.itens
+                .stream()
                 .filter(Objects::nonNull)
                 .filter(ItemPedido::isValorTotalItemInFilterValido)
                 .mapToDouble(ItemPedido::getValorTotalItemNumeric)
                 .sum())
-                .setScale(2, BigDecimal.ROUND_UP);
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public void calculaValorItens() {
@@ -112,12 +107,13 @@ public class Pedido extends AbstractEntity {
         if (isNotContainsItens())
             return;
 
-        this.valorItens = BigDecimal.valueOf(this.itens.stream()
+        this.valorItens = BigDecimal.valueOf(this.itens
+                .stream()
                 .filter(Objects::nonNull)
                 .filter(ItemPedido::isValorItemInFilterValido)
                 .mapToDouble(ItemPedido::getValorItemNumeric)
                 .sum())
-                .setScale(2, BigDecimal.ROUND_UP);
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public void calcularValorTotalDesconto() {
@@ -130,7 +126,7 @@ public class Pedido extends AbstractEntity {
                 .filter(ItemPedido::isValorDescontoItemInFilterValido)
                 .mapToDouble(ItemPedido::getValorDescontoItemNumeric)
                 .sum())
-                .setScale(2, BigDecimal.ROUND_UP);
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
     @JsonIgnore

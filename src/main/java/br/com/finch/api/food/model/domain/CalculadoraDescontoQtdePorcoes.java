@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -16,7 +17,9 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @ToString
-public class CalculadoraDescontoQtdePorcoes {
+public class CalculadoraDescontoQtdePorcoes implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public BigDecimal efetuarCalculoDescontoNaPromocaoPor(ItemPedido itemPedido, TipoIngrediente tipoIngrediente) {
         return obterValorDesconto(itemPedido, tipoIngrediente).setScale(2, RoundingMode.HALF_EVEN);

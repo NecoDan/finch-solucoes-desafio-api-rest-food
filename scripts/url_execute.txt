@@ -1,0 +1,179 @@
+
+http://localhost:8080/oauth/token
+
+http://localhost:8080/pedidos/
+
+http://localhost:8080/pedidos/adicionaPorcaoItem/1?lancheId=2&ingredienteId=4&qtde=2.0
+
+{
+    "lanchePedidos": [
+        {
+            "id": 2,
+            "dataCadastro": "07/05/2020 11:19:32",
+            "ativo": true,
+            "nomeCliente": "Daniel",
+            "telefone": "9999999999",
+            "valorTotal": 0.000000,
+                "itens": [
+                    {
+                        "id": 1,
+                        "dataCadastro": "07/05/2020 12:14:16",
+                        "ativo": true,
+                        "lanche": {
+                            "id": 3,
+                            "dataCadastro": "05/05/2020 11:37:56",
+                            "ativo": true,
+                            "descricao": "X-Egg Bacon",
+                            "valorTotal": 5.30,
+                            "ingredientes": [
+                                {
+                                    "id": 3,
+                                    "dataCadastro": "05/05/2020 11:37:47",
+                                    "ativo": true,
+                                    "descricao": "Hamburguer",
+                                    "custo": 3.00
+                                },
+                                {
+                                    "id": 4,
+                                    "dataCadastro": "05/05/2020 11:37:47",
+                                    "ativo": true,
+                                    "descricao": "Ovo",
+                                    "custo": 0.80
+                                },
+                                {
+                                    "id": 5,
+                                    "dataCadastro": "05/05/2020 11:37:47",
+                                    "ativo": true,
+                                    "descricao": "Queijo",
+                                    "custo": 1.50
+                                }
+                            ]
+                        },
+                        "item": 1,
+                        "quantidade": 1.00000,
+                        "valorTotal": 5.300000,
+                    "adicionais": [
+                        {
+                            "id": 1,
+                            "dataCadastro": "07/05/2020 14:45:24",
+                            "ativo": true,
+                            "ingrediente": {
+                                "id": 4,
+                                "dataCadastro": "05/05/2020 11:37:47",
+                                "ativo": true,
+                                "descricao": "Ovo",
+                                "custo": 0.80
+                            },
+                            "quantidade": 2.000000
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+--##########################################################################################################################################
+
+http://localhost:8080/ingredientes/
+
+http://localhost:8080/ingredientes/exibirTodosEmXML/
+
+http://localhost:8080/pedidos/
+
+http://localhost:8080/pedidos/exibirTodos/
+
+http://localhost:8080/pedidos/exibirTodosEmXML/
+
+http://localhost:8080/pedidos/exibirTodosEmJSON/
+
+http://localhost:8080/pedidos/exibirPedidoViaNumControle?numeroControle=151515
+
+http://localhost:8080/pedidos/exibirTodosViaCodigoCliente?codigoCliente=111111
+
+http://localhost:8080/pedidos/exibirTodosViaData?data=17/03/2020
+
+http://localhost:8080/pedidos/exibirTodosPorPeriodo?dataInicio=17/03/2020&dataFim=17/03/2020
+
+http://localhost:8080/pedidos/gerarPedidos/
+
+--##########################################################################################################################################
+
+   {
+            "nomeCliente": "Gustavo Lima",
+            "telefone": "8888888888",
+            "itens": [
+                {
+
+                    "lanche": {
+                        "id": 3
+                    },
+                }
+                ]
+    }
+
+--##########################################################################################################################################
+http://localhost:8080/pedidos/adicionaItem/109?lancheId=2&qtde=2.0
+
+{
+  "itens": [
+    {
+      "adicionais": [
+        {
+          "ingrediente": {
+            "id": 4
+          },
+          "quantidade": 3.000000
+        }
+      ],
+      "lanche": {
+        "id": 3
+      },
+      "quantidade": 4.00000
+    }
+  ],
+  "nomeCliente": "Gustavo Lima",
+  "telefone": "8888888888"
+}
+
+--##########################################################################################################################################
+ http://localhost:8080/pedidos/adicionaItem?pedidoId=109&lancheId=2&qtde=1.0
+
+http://localhost:8080/pedidos/adicionaItem/109/?lancheId=2&qtde=1.0
+
+{
+  "ingrediente": {
+    "id": 2
+  },
+  "quantidade": 1.000000
+}
+
+--##########################################################################################################################################
+
+{
+  "ingrediente": {
+    "id": 2
+  },
+  "quantidade": 1.000000
+}
+
+{
+  "escalaTermometricaDestino": {
+    "id": 2
+  },
+  "escalaTermometricaOrigem": {
+    "id": 1
+  },
+  "id": 25,
+  "valorGrauOrigem": 32.0
+}
+
+{
+  "escalaTermometricaDestino": {
+    "id": 2
+  },
+  "escalaTermometricaOrigem": {
+    "id": 1
+  },
+  "valorGrauOrigem": 32.0
+}

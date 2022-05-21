@@ -18,6 +18,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -126,7 +127,7 @@ public class ItemPedido extends AbstractEntity {
             aplicarItemValor();
 
         this.valorTotal = calculaValorTotalItem();
-        this.valorTotal = this.valorTotal.add(getValorTotalAdicionais()).setScale(2, BigDecimal.ROUND_UP);
+        this.valorTotal = this.valorTotal.add(getValorTotalAdicionais()).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public BigDecimal calculaValorTotalItem() {
@@ -143,7 +144,7 @@ public class ItemPedido extends AbstractEntity {
                 .filter(AdicionalItemPedido::isParamValidosFilterCalculoCustoTotal)
                 .mapToDouble(AdicionalItemPedido::getCalculoValorTotalNumeric)
                 .sum())
-                .setScale(2, BigDecimal.ROUND_UP);
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public void aplicarPromocao(Promocao promocao) {
@@ -151,7 +152,7 @@ public class ItemPedido extends AbstractEntity {
             this.valorDesconto = promocao.getRegraCalculoPromocaoDesconto().calculaDescontoNaPromocao(this);
             this.valorTotal = this.valorTotal.subtract(this.valorDesconto);
         }
-        this.valorTotal = this.valorTotal.setScale(2, BigDecimal.ROUND_UP);
+        this.valorTotal = this.valorTotal.setScale(2, RoundingMode.HALF_EVEN);
     }
 
     @JsonIgnore

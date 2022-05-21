@@ -3,7 +3,6 @@ package br.com.finch.api.food.service.reports;
 import br.com.finch.api.food.model.Pedido;
 import br.com.finch.api.food.model.dtos.PedidosWrapper;
 import br.com.finch.api.food.repository.PedidoRepository;
-import br.com.finch.api.food.service.IPedidoService;
 import br.com.finch.api.food.util.exceptions.ValidadorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
